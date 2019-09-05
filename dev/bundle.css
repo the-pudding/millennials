@@ -729,6 +729,10 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
 .verb {
   color: #000;
 }
+.count {
+  font-size: 12px;
+  font-color: #808080;
+}
 .noun {
   color: #fff;
   font-size: 14px;
@@ -743,6 +747,7 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
 }
 .article-container {
   border-bottom: 1px dashed #000;
+  cursor: pointer;
 }
 .article-hed {
   text-transform: capitalize;

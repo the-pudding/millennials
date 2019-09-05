@@ -59,11 +59,12 @@ function loadNounArticles(noun){
     $articles = articlesJoin        
         .append('div')
         .attr('class', 'article-container')
+        .on('click', d => window.open(d.url))   
     
     $articles
         .append('p')
         .attr('class','article-meta')
-        .text(d=>`${d.url.replace('http://','').split('/')[0]} • ${d.pub_date}`)
+        .text(d=>`${d.url.split('//')[1].split('/')[0]} • ${d.pub_date}`)
 
     $articles
         .append('p')
@@ -73,7 +74,8 @@ function loadNounArticles(noun){
     $articles
         .append('p')
         .attr('class','article-snippet')
-        .text(d=>d.snippet)        
+        .text(d=>d.snippet)    
+        
 }
 
 
@@ -129,7 +131,9 @@ function fillColumn(data, wordType){
         .append('div')
 
     $verbs.attr('class', d=>`verb-${wordType} verb verb-${d.verb}`)
-        .text(d=>d.verb)
+        .html(d=>{
+           return `<span class='verb'>${d.verb}</span> <span class='count'>${d.count}x</span>`
+        })
 
     nounJoin = $verbs.selectAll(`div.noun-${wordType}`)
         .data(function(d){

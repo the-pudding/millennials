@@ -590,9 +590,11 @@ function generateEmoji() {
 function loadNounArticles(noun) {
   d3.selectAll('div.main-page__articles-container').selectAll('div.article-container').remove();
   articlesJoin = d3.select('div.main-page__articles-container').selectAll('div.article').data(noun.articles).enter();
-  $articles = articlesJoin.append('div').attr('class', 'article-container');
+  $articles = articlesJoin.append('div').attr('class', 'article-container').on('click', function (d) {
+    return window.open(d.url);
+  });
   $articles.append('p').attr('class', 'article-meta').text(function (d) {
-    return "".concat(d.url.replace('http://', '').split('/')[0], " \u2022 ").concat(d.pub_date);
+    return "".concat(d.url.split('//')[1].split('/')[0], " \u2022 ").concat(d.pub_date);
   });
   $articles.append('p').attr('class', 'article-hed').text(function (d) {
     return d.headline;
@@ -648,8 +650,8 @@ function fillColumn(data, wordType) {
   $verbs = verbJoin.append('div');
   $verbs.attr('class', function (d) {
     return "verb-".concat(wordType, " verb verb-").concat(d.verb);
-  }).text(function (d) {
-    return d.verb;
+  }).html(function (d) {
+    return "<span class='verb'>".concat(d.verb, "</span> <span class='count'>").concat(d.count, "x</span>");
   });
   nounJoin = $verbs.selectAll("div.noun-".concat(wordType)).data(function (d) {
     allNounCount = d.nouns.length;
