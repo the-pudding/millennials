@@ -3,10 +3,10 @@
 
 <head>
 
-	{{> base/meta}}
+	{{!-- {{> base/meta}} --}}
 
 	<link inline rel='stylesheet' href='bundle.css' />
-
+    <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 	{{> base/font}}
 
 
@@ -18,19 +18,19 @@
 
 <body>
 
-	{{> base/header 'sticky'}}
+	{{!-- {{> base/header 'sticky'}} --}}
 
 	<main id='content'>
 
-		{{> story/intro }}
+		{{> story/main }}
 		{{!-- delete guide and put your html here --}}
-		{{> base/guide }}
+		{{!-- {{> base/guide }} --}}
 
 	</main>
 
-	{{> base/footer }}
+	{{!-- {{> base/footer }} --}}
 
-
+    
 	<script src='{{basepath}}assets/scripts/d3.v5.10.0.min.js'></script>
 	<script src='main.js?version={{timestamp}}' async></script>
 </body>

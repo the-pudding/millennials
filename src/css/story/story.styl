@@ -1,1 +1,70 @@
 /* CUSTOM STORY STYLE */
+.watermark
+    // top 0%
+    // left 50%
+    // transform: translate(-50%,50%)
+    // position absolute
+    padding-top 1rem
+    text-align: center
+    width 30%
+    margin 0 auto
+
+.main-page
+    background linear-gradient(toright, 180deg, #34A29E 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(toright, 180deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%), #FF533D;
+    background linear-gradient(to right, #34A29E, #FF533D)
+    display flex
+    flex-direction: row
+    justify-content: space-between
+    // background #466368
+    // background -webkit-linear-gradient(#648880, #293f50)
+    // background -moz-linear-gradient(#648880, #293f50)
+    // background linear-gradient(#648880, #293f50)
+    height 100%
+
+    &__nav
+        flex-grow 1
+
+    &__articles-container
+        max-width: 50vw
+    
+.valence-heading
+    &.positive
+        text-align: left
+        text-transform uppercase
+
+.valence-heading
+    &.negative
+        text-align: right    
+        text-transform uppercase
+.mono
+    font-family 'Menlo','Consolas','Monaco','Courier New',monospace;
+
+.verb-negative
+    text-align right
+
+.verb
+    color black
+
+.noun
+    color white
+    font-size: 14px
+    cursor pointer
+
+.hidden
+    display none
+
+.expand-button
+    color #BEBEBE
+    cursor pointer
+
+.article-container
+    border-bottom 1px dashed black
+
+.article-hed    
+    text-transform: capitalize
+    font-size: 24px
+    font-weight: 600
+    font-family: 'Share Tech Mono', monospace;
+
+.article-snippet
+    font-family: $national 
