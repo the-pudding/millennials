@@ -61,6 +61,7 @@ function loadNounArticles(noun){
         .attr('class', 'article-container')
         .on('click', d => window.open(d.url))   
     
+        
     $articles
         .append('p')
         .attr('class','article-meta')
