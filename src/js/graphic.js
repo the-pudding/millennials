@@ -74,7 +74,7 @@ function loadNounArticles(noun){
     $articles
         .append('p')
         .attr('class','article-snippet')
-        .text(d=>d.snippet)    
+        .html(d=>`<span>${d.snippet}</span>... <span class='click-more'>Click for full text</span>`)    
         
 }
 

@@ -758,4 +758,9 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
 .article-snippet {
   font-family: 'National 2 Web';
 }
+.click-more {
+  font-size: 12px;
+  font-color: #000;
+  background-color: #808080;
+}
 /*# sourceMappingURL=bundle.css.map */

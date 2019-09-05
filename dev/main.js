@@ -599,8 +599,8 @@ function loadNounArticles(noun) {
   $articles.append('p').attr('class', 'article-hed').text(function (d) {
     return d.headline;
   });
-  $articles.append('p').attr('class', 'article-snippet').text(function (d) {
-    return d.snippet;
+  $articles.append('p').attr('class', 'article-snippet').html(function (d) {
+    return "<span>".concat(d.snippet, "</span>... <span class='click-more'>Click for full text</span>");
   });
 }
 
