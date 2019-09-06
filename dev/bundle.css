@@ -708,6 +708,8 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
 }
 .main-page__nav {
   flex-grow: 1;
+  overflow: scroll;
+  height: 100vh;
 }
 .main-page__articles-container {
   max-width: 50vw;
