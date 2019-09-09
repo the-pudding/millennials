@@ -61,7 +61,7 @@ function loadNounArticles(noun){
         .attr('class', 'article-container')
         .on('click', d => window.open(d.url))   
     
-        
+
     $articles
         .append('p')
         .attr('class','article-meta')
@@ -174,7 +174,8 @@ function addWords(){
 }
 
 function init() {    
-  d3.json('assets/data/articles.json')
+//   d3.json('assets/data/articles.json')
+d3.json('assets/data/articles_json_v2_large.json')
   .then(data=>addInitialData(data))
   .then(addedData=>cleanData(addedData))
   .then(()=>addWords())
