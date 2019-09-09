@@ -683,7 +683,7 @@ function addWords() {
 
 function init() {
   //   d3.json('assets/data/articles.json')
-  d3.json('assets/data/articles_json_v2_large.json').then(function (data) {
+  d3.json('assets/data/articles_json_v2_small.json').then(function (data) {
     return addInitialData(data);
   }).then(function (addedData) {
     return cleanData(addedData);

@@ -175,7 +175,7 @@ function addWords(){
 
 function init() {    
 //   d3.json('assets/data/articles.json')
-d3.json('assets/data/articles_json_v2_large.json')
+d3.json('assets/data/articles_json_v2_small.json')
   .then(data=>addInitialData(data))
   .then(addedData=>cleanData(addedData))
   .then(()=>addWords())
