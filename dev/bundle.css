@@ -692,6 +692,30 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
   margin-top: 1rem;
   text-align: center;
 }
+.tooltip {
+  position: absolute;
+  max-width: 400px;
+  background-color: #fff;
+  pointer-events: none;
+  z-index: 10;
+}
+.tooltip__meta {
+  font-size: 16px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.tooltip__hed {
+  font-size: 24px;
+  text-transform: capitalize;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.tooltip__other-verbs {
+  font-size: 12px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  color: #808080;
+}
 .watermark {
   padding-top: 1rem;
   text-align: center;
@@ -699,53 +723,54 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
   margin: 0 auto;
 }
 .main-page {
-  background: linear-gradient(toright, 180deg, #34a29e 0%, rgba(255,255,255,0) 100%), linear-gradient(toright, 180deg, #fff 0%, rgba(255,255,255,0) 100%), #ff533d;
-  background: linear-gradient(to right, #34a29e, #ff533d);
+  background: #282828;
+  height: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+}
+.main-page__sidebar {
   height: 100%;
+  width: 5rem;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
-.main-page__nav {
-  flex-grow: 1;
-  overflow: scroll;
-  height: 100vh;
+.main-page__content {
+  margin-left: 5rem;
 }
-.main-page__articles-container {
-  max-width: 50vw;
-}
-.valence-heading.positive {
-  text-align: left;
-  text-transform: uppercase;
-}
-.valence-heading.negative {
-  text-align: right;
-  text-transform: uppercase;
+.button {
+  text-align: center;
+  max-width: 30%;
 }
 .mono {
   font-family: 'Menlo', 'Consolas', 'Monaco', 'Courier New', monospace;
 }
-.verb-negative {
-  text-align: right;
+.verb-container {
+  padding-top: 2rem;
+  position: relative;
 }
-.verb {
-  color: #000;
+.verb-name {
+  color: #ff5a81;
+  text-transform: uppercase;
 }
-.count {
-  font-size: 12px;
-  font-color: #808080;
+.additional-verbs {
+  font-weight: 600;
 }
 .noun {
   color: #fff;
   font-size: 14px;
   cursor: pointer;
+  display: inline-block;
+}
+.noun-selected {
+  text-decoration: underline;
 }
 .hidden {
   display: none;
-}
-.expand-button {
-  color: #bebebe;
-  cursor: pointer;
 }
 .article-container {
   border-bottom: 1px dashed #000;

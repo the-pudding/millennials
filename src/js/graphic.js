@@ -1,44 +1,63 @@
 /* global d3 */
+let $content;
+
 let verbJoin;
 let nounJoin;
 let articlesJoin;
 
-let $verbs;
-let $nouns;
+let $verb;
+let $noun;
 let $articles;
 
-let positiveVerbs = []
-let negativeVerbs = []
+function handleMouseEnter(d){
+    
+    console.log(d)
+    const el = this;
+    const $sel = d3.select(el)
+	const $selVerb = d3.select(el.parentNode);
 
-let allNounCount;
+    const $tooltip = $selVerb.select('.tooltip')
+    
+    // show tooltip, load data
+    $tooltip.classed('hidden', false)
 
-const allVerbs = [positiveVerbs,positiveVerbs]
+
+    $tooltip.select('p.tooltip__meta')
+    .text(`${d.articles[0].url.split('//')[1].split('/')[0]} • ${d.articles[0].pub_date}`)  
+    
+    $tooltip.select('p.tooltip__hed')
+    .text(`${d.articles[0].headline}`)   
+
+    $tooltip.select('p.tooltip__other-verbs')
+    .html(()=>{
+        const additionalArticles = d.articles.length>1? `<span class='noun-selected'>${generateEmoji()} ${d.noun}</span> is also found in these verbs: <span class='additional-verbs'>${d.other_verbs.join(', ')}</span>`: ``
+        return additionalArticles
+    })   
+
+    const x = el.offsetLeft;
+    const y = el.offsetTop;
+    console.log(y)
+
+    $tooltip
+    .style('left',`${x}px`)
+    .style('top', `-10px`)
+
+}
+
+function handleMouseLeave(){
+    d3.selectAll('.tooltip')
+    .classed('hidden', true)
+}
 
 
 function resize() {}
 
-function addInitialData(data){
-    
-    return data.map(item=>({
-        ...item,
-        count: +item.nouns.length
-    })).sort((a,b)=>(b.count-a.count))
-}
-
-function cleanData(dirtyData){
-    console.log(dirtyData)
-    negativeVerbs = dirtyData.filter(item=>item.avg_noun_valence < 0)
-    positiveVerbs = dirtyData.filter(item=>item.avg_noun_valence > 0)
-
-    console.log(dirtyData[0])
-}
-
-function checkNoun(noun){
-    if (noun.hasOwnProperty('noun')){
-        return true;
-    }
-    return false;
-}
+// function checkNoun(noun){
+//     if (noun.hasOwnProperty('noun')){
+//         return true;
+//     }
+//     return false;
+// }
 
 function generateEmoji(){
     var emojis = [
@@ -48,137 +67,102 @@ function generateEmoji(){
     return emojis[Math.floor(Math.random() * emojis.length)];    
 }
 
-function loadNounArticles(noun){
-    d3.selectAll('div.main-page__articles-container').selectAll('div.article-container').remove()
-
-    articlesJoin = d3.select('div.main-page__articles-container')
-        .selectAll('div.article')
-        .data(noun.articles)
-        .enter()
-
-    $articles = articlesJoin        
-        .append('div')
-        .attr('class', 'article-container')
-        .on('click', d => window.open(d.url))   
-    
-
-    $articles
-        .append('p')
-        .attr('class','article-meta')
-        .text(d=>`${d.url.split('//')[1].split('/')[0]} • ${d.pub_date}`)
-
-    $articles
-        .append('p')
-        .attr('class','article-hed')
-        .text(d=>d.headline)
-
-    $articles
-        .append('p')
-        .attr('class','article-snippet')
-        .html(d=>`<span>${d.snippet}</span>... <span class='click-more'>Click for full text</span>`)    
-        
-}
-
-
-function setNounVisibilityClass(noun,i, wordType){
-    if(checkNoun(noun)){
-        if (i<6) return `noun ${wordType}`
-        else return `noun ${wordType} hidden`
-    }
-    else{return 'expand-button'}
-}
-
-function abbreviateNoun(word){
-    const abbreviatedWord = word.length > 25 ? word.slice(0,25).concat('...') : word
-    return abbreviatedWord
-}
-
-function handleExpandButton(el){
-    const buttonClasses = d3.select(el).attr('class')
-    return buttonClasses.includes('expanded')
-}
-
-function expandNouns(el){
-    d3.select(el).classed('expanded', true)
-    d3.select(el).text('See fewer nouns')
-    d3.select(el.parentNode).selectAll('div.noun').classed('hidden',false)
-}
-
-function contractNouns(el){
-    const totalNouns = d3.select(el.parentNode).selectAll('div.noun').size()
-    d3.select(el.parentNode).selectAll('div.noun').classed('hidden',(d,i)=> i<6 ? false : true)
-    d3.select(el).classed('expanded', false).text(`Click for ${totalNouns} more...`)
-    
-}
-
-function handleNounClick(el, noun){
-    if(checkNoun(noun)){        
-        loadNounArticles(noun)
-    }
-    else {
-        const expanded = handleExpandButton(el);
-        expanded ? contractNouns(el) : expandNouns(el)
-    }
+function handleMouseOver(el, noun){
  
-}
-
-function fillColumn(data, wordType){
-    verbJoin=d3.select(`.${wordType}.main-page__nav`)
-        .selectAll(`div.verb-${wordType}`)
-        .data(data)
-        .enter()
-
-    $verbs = verbJoin
-        .append('div')
-
-    $verbs.attr('class', d=>`verb-${wordType} verb verb-${d.verb}`)
-        .html(d=>{
-           return `<span class='verb'>${d.verb}</span> <span class='count'>${d.count}x</span>`
-        })
-
-    nounJoin = $verbs.selectAll(`div.noun-${wordType}`)
-        .data(function(d){
-            allNounCount = d.nouns.length;
-
-            let nounsToAdd = d.nouns;
-            
-            if(allNounCount <6 ){
-            }
-            else d.nouns.push(`click for ${allNounCount} more...`) 
-            
-            return nounsToAdd;
-        })
-        .enter()
-
-    $nouns= nounJoin
-        .append('div')
+    console.log(d3.mouse(el))
     
+    // .attr('')
 
-    $nouns
-        .attr('class',(noun,i)=>setNounVisibilityClass(noun,i,wordType))
-        .text(noun=>{
-            const emoji = generateEmoji()
-            if(checkNoun(noun)){
-                let shortNoun =abbreviateNoun(noun.noun)                
-                return `${shortNoun}${emoji}`;
-            }
-            else return `${noun}${emoji}`
-        })
-        .on('click',(noun,i,n)=>handleNounClick(n[i],noun))
+    // let coordinates= d3.mouse(el);
+
+    // d3.select('.tooltip')
+    // .classed('hidden',false)
+    // .style("left", (d3.event.pageX) + "px")		
+    // .style("top", (d3.event.pageY - 28) + "px");	
 }
 
 
-function addWords(){
-    fillColumn(positiveVerbs,'positive')
-    fillColumn(negativeVerbs,'negative')
+function addArticles(data){
+    console.log(data)
+    $content = d3.select('.content');
+
+
+    //verbs (top-level)
+    verbJoin = $content.selectAll('div')
+    .data(data)
+    .enter()
+    
+    $verb = verbJoin
+    .append('div')
+    .attr('class','verb-container')
+    
+    $verb.append('div')
+    .attr('class','verb-name')
+    .attr('id', d=>d.verb)
+    .text(d=>d.verb)
+
+    //tooltip
+    const $tooltip = $verb
+    .append('div')
+    .attr('class','tooltip hidden')
+
+    // tooltip sections
+    $tooltip
+    .append('p')
+    .attr('class','tooltip__meta');
+
+    $tooltip
+    .append('p')
+    .attr('class','tooltip__hed');
+
+    $tooltip
+    .append('p')
+    .attr('class','tooltip__other-verbs');
+
+    // nouns (bottom-level)
+    nounJoin = $verb
+    .selectAll('span')
+    .data(d=>d.nouns)
+    .enter()
+
+    $noun = nounJoin
+    .append('div')
+    .attr('class', 'noun')
+    .text(function(d){
+        return ` ${d.noun} ${generateEmoji()} · `            
+    })
+    .on('mouseenter', handleMouseEnter)
+    .on('mouseleave', handleMouseLeave)
+    .on('click', d=> window.open(d.articles[0].url))
+
+
+
+
+
+    // .on('mouseenter', (d,i,n)=>handleMouseOver(n[i],d))
+    // d3.select('body').on('mousemove',handleThing)
+    // window.on('mousemove',handleThing)
+    // d3.select(window).on('mousemove',handleThing)
+
 }
 
-function init() {    
-//   d3.json('assets/data/articles.json')
-d3.json('assets/data/articles_json_v2_small.json')
-  .then(data=>addInitialData(data))
-  .then(addedData=>cleanData(addedData))
-  .then(()=>addWords())
+function cleanData(data){
+    const verbsToKeep = data[0].map(item=>item.verb);
+    console.log(verbsToKeep)
+    const allVerbs = data[1];
+    const filteredVerbs = allVerbs.filter(verb=>verbsToKeep.includes(verb.verb))
+
+    return filteredVerbs;
+}
+
+function init() {   
+    
+Promise.all([
+    d3.csv("assets/data/verbs_to_include.csv"),
+    d3.json("assets/data/articles_json_v2_small.json")
+    ])
+    .then(data=>cleanData(data))
+    .then(cleanedData=>addArticles(cleanedData))
 }
 
 

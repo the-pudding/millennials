@@ -535,160 +535,109 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 /* global d3 */
+var $content;
 var verbJoin;
 var nounJoin;
 var articlesJoin;
-var $verbs;
-var $nouns;
+var $verb;
+var $noun;
 var $articles;
-var positiveVerbs = [];
-var negativeVerbs = [];
-var allNounCount;
-var allVerbs = [positiveVerbs, positiveVerbs];
 
-function resize() {}
+function handleMouseEnter(d) {
+  console.log(d);
+  var el = this;
+  var $sel = d3.select(el);
+  var $selVerb = d3.select(el.parentNode);
+  var $tooltip = $selVerb.select('.tooltip'); // show tooltip, load data
 
-function addInitialData(data) {
-  return data.map(function (item) {
-    return _objectSpread({}, item, {
-      count: +item.nouns.length
-    });
-  }).sort(function (a, b) {
-    return b.count - a.count;
+  $tooltip.classed('hidden', false);
+  $tooltip.select('p.tooltip__meta').text("".concat(d.articles[0].url.split('//')[1].split('/')[0], " \u2022 ").concat(d.articles[0].pub_date));
+  $tooltip.select('p.tooltip__hed').text("".concat(d.articles[0].headline));
+  $tooltip.select('p.tooltip__other-verbs').html(function () {
+    var additionalArticles = d.articles.length > 1 ? "<span class='noun-selected'>".concat(generateEmoji(), " ").concat(d.noun, "</span> is also found in these verbs: <span class='additional-verbs'>").concat(d.other_verbs.join(', '), "</span>") : "";
+    return additionalArticles;
   });
+  var x = el.offsetLeft;
+  var y = el.offsetTop;
+  console.log(y);
+  $tooltip.style('left', "".concat(x, "px")).style('top', "-10px");
 }
 
-function cleanData(dirtyData) {
-  console.log(dirtyData);
-  negativeVerbs = dirtyData.filter(function (item) {
-    return item.avg_noun_valence < 0;
-  });
-  positiveVerbs = dirtyData.filter(function (item) {
-    return item.avg_noun_valence > 0;
-  });
-  console.log(dirtyData[0]);
+function handleMouseLeave() {
+  d3.selectAll('.tooltip').classed('hidden', true);
 }
 
-function checkNoun(noun) {
-  if (noun.hasOwnProperty('noun')) {
-    return true;
-  }
+function resize() {} // function checkNoun(noun){
+//     if (noun.hasOwnProperty('noun')){
+//         return true;
+//     }
+//     return false;
+// }
 
-  return false;
-}
 
 function generateEmoji() {
   var emojis = ['😄', '😃', '😀', '😊', '☺', '😉', '😍', '😘', '😚', '😗', '😙', '😜', '😝', '😛', '😳', '😁', '😔', '😌', '😒', '😞', '😣', '😢', '😂', '😭', '😪', '😥', '😰', '😅', '😓', '😩', '😫', '😨', '😱', '😠', '😡', '😤', '😖', '😆', '😋', '😷', '😎', '😴', '😵', '😲', '😟', '😦', '😧', '😈', '👿', '😮', '😬', '😐', '😕', '😯', '😶', '😇', '😏', '😑', '👲', '👳', '👮', '👷', '💂', '👶', '👦', '👧', '👨', '👩', '👴', '👵', '👱', '👼', '👸', '😺', '😸', '😻', '😽', '😼', '🙀', '😿', '😹', '😾', '👹', '👺', '🙈', '🙉', '🙊', '💀', '👽', '💩', '🔥', '✨', '🌟', '💫', '💥', '💢', '💦', '💧', '💤', '💨', '👂', '👀', '👃', '👅', '👄', '👍', '👎', '👌', '👊', '✊', '✌', '👋', '✋', '👐', '👆', '👇', '👉', '👈', '🙌', '🙏', '☝', '👏', '💪', '🚶', '🏃', '💃', '👫', '👪', '👬', '👭', '💏', '💑', '👯', '🙆', '🙅', '💁', '🙋', '💆', '💇', '💅', '👰', '🙎', '🙍', '🙇', '🎩', '👑', '👒', '👟', '👞', '👡', '👠', '👢', '👕', '👔', '👚', '👗', '🎽', '👖', '👘', '👙', '💼', '👜', '👝', '👛', '👓', '🎀', '🌂', '💄', '💛', '💙', '💜', '💚', '❤', '💔', '💗', '💓', '💕', '💖', '💞', '💘', '💌', '💋', '💍', '💎', '👤', '👥', '💬', '👣', '💭', '🐶', '🐺', '🐱', '🐭', '🐹', '🐰', '🐸', '🐯', '🐨', '🐻', '🐷', '🐽', '🐮', '🐗', '🐵', '🐒', '🐴', '🐑', '🐘', '🐼', '🐧', '🐦', '🐤', '🐥', '🐣', '🐔', '🐍', '🐢', '🐛', '🐝', '🐜', '🐞', '🐌', '🐙', '🐚', '🐠', '🐟', '🐬', '🐳', '🐋', '🐄', '🐏', '🐀', '🐃', '🐅', '🐇', '🐉', '🐎', '🐐', '🐓', '🐕', '🐖', '🐁', '🐂', '🐲', '🐡', '🐊', '🐫', '🐪', '🐆', '🐈', '🐩', '🐾', '💐', '🌸', '🌷', '🍀', '🌹', '🌻', '🌺', '🍁', '🍃', '🍂', '🌿', '🌾', '🍄', '🌵', '🌴', '🌲', '🌳', '🌰', '🌱', '🌼', '🌐', '🌞', '🌝', '🌚', '🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘', '🌜', '🌛', '🌙', '🌍', '🌎', '🌏', '🌋', '🌌', '🌠', '⭐', '☀', '⛅', '☁', '⚡', '☔', '❄', '⛄', '🌀', '🌁', '🌈', '🌊', '🎍', '💝', '🎎', '🎒', '🎓', '🎏', '🎆', '🎇', '🎐', '🎑', '🎃', '👻', '🎅', '🎄', '🎁', '🎋', '🎉', '🎊', '🎈', '🎌', '🔮', '🎥', '📷', '📹', '📼', '💿', '📀', '💽', '💾', '💻', '📱', '☎', '📞', '📟', '📠', '📡', '📺', '📻', '🔊', '🔉', '🔈', '🔇', '🔔', '🔕', '📢', '📣', '⏳', '⌛', '⏰', '⌚', '🔓', '🔒', '🔏', '🔐', '🔑', '🔎', '💡', '🔦', '🔆', '🔅', '🔌', '🔋', '🔍', '🛁', '🛀', '🚿', '🚽', '🔧', '🔩', '🔨', '🚪', '🚬', '💣', '🔫', '🔪', '💊', '💉', '💰', '💴', '💵', '💷', '💶', '💳', '💸', '📲', '📧', '📥', '📤', '✉', '📩', '📨', '📯', '📫', '📪', '📬', '📭', '📮', '📦', '📝', '📄', '📃', '📑', '📊', '📈', '📉', '📜', '📋', '📅', '📆', '📇', '📁', '📂', '✂', '📌', '📎', '✒', '✏', '📏', '📐', '📕', '📗', '📘', '📙', '📓', '📔', '📒', '📚', '📖', '🔖', '📛', '🔬', '🔭', '📰', '🎨', '🎬', '🎤', '🎧', '🎼', '🎵', '🎶', '🎹', '🎻', '🎺', '🎷', '🎸', '👾', '🎮', '🃏', '🎴', '🀄', '🎲', '🎯', '🏈', '🏀', '⚽', '⚾', '🎾', '🎱', '🏉', '🎳', '⛳', '🚵', '🚴', '🏁', '🏇', '🏆', '🎿', '🏂', '🏊', '🏄', '🎣', '☕', '🍵', '🍶', '🍼', '🍺', '🍻', '🍸', '🍹', '🍷', '🍴', '🍕', '🍔', '🍟', '🍗', '🍖', '🍝', '🍛', '🍤', '🍱', '🍣', '🍥', '🍙', '🍘', '🍚', '🍜', '🍲', '🍢', '🍡', '🍳', '🍞', '🍩', '🍮', '🍦', '🍨', '🍧', '🎂', '🍰', '🍪', '🍫', '🍬', '🍭', '🍯', '🍎', '🍏', '🍊', '🍋', '🍒', '🍇', '🍉', '🍓', '🍑', '🍈', '🍌', '🍐', '🍍', '🍠', '🍆', '🍅', '🌽', '🏠', '🏡', '🏫', '🏢', '🏣', '🏥', '🏦', '🏪', '🏩', '🏨', '💒', '⛪', '🏬', '🏤', '🌇', '🌆', '🏯', '🏰', '⛺', '🏭', '🗼', '🗾', '🗻', '🌄', '🌅', '🌃', '🗽', '🌉', '🎠', '🎡', '⛲', '🎢', '🚢', '⛵', '🚤', '🚣', '⚓', '🚀', '✈', '💺', '🚁', '🚂', '🚊', '🚉', '🚞', '🚆', '🚄', '🚅', '🚈', '🚇', '🚝', '🚋', '🚃', '🚎', '🚌', '🚍', '🚙', '🚘', '🚗', '🚕', '🚖', '🚛', '🚚', '🚨', '🚓', '🚔', '🚒', '🚑', '🚐', '🚲', '🚡', '🚟', '🚠', '🚜', '💈', '🚏', '🎫', '🚦', '🚥', '⚠', '🚧', '🔰', '⛽', '🏮', '🎰', '♨', '🗿', '🎪', '🎭', '📍', '🚩', '⬆', '⬇', '⬅', '➡', '🔠', '🔡', '🔤', '↗', '↖', '↘', '↙', '↔', '↕', '🔄', '◀', '▶', '🔼', '🔽', '↩', '↪', 'ℹ', '⏪', '⏩', '⏫', '⏬', '⤵', '⤴', '🆗', '🔀', '🔁', '🔂', '🆕', '🆙', '🆒', '🆓', '🆖', '📶', '🎦', '🈁', '🈯', '🈳', '🈵', '🈴', '🈲', '🉐', '🈹', '🈺', '🈶', '🈚', '🚻', '🚹', '🚺', '🚼', '🚾', '🚰', '🚮', '🅿', '♿', '🚭', '🈷', '🈸', '🈂', 'Ⓜ', '🛂', '🛄', '🛅', '🛃', '🉑', '㊙', '㊗', '🆑', '🆘', '🆔', '🚫', '🔞', '📵', '🚯', '🚱', '🚳', '🚷', '🚸', '⛔', '✳', '❇', '❎', '✅', '✴', '💟', '🆚', '📳', '📴', '🅰', '🅱', '🆎', '🅾', '💠', '➿', '♻', '♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓', '⛎', '🔯', '🏧', '💹', '💲', '💱', '©', '®', '™', '〽', '〰', '🔝', '🔚', '🔙', '🔛', '🔜', '❌', '⭕', '❗', '❓', '❕', '❔', '🔃', '🕛', '🕧', '🕐', '🕜', '🕑', '🕝', '🕒', '🕞', '🕓', '🕟', '🕔', '🕠', '🕕', '🕖', '🕗', '🕘', '🕙', '🕚', '🕡', '🕢', '🕣', '🕤', '🕥', '🕦', '✖', '➕', '➖', '➗', '♠', '♥', '♣', '♦', '💮', '💯', '✔', '☑', '🔘', '🔗', '➰', '🔱', '🔲', '🔳', '◼', '◻', '◾', '◽', '▪', '▫', '🔺', '⬜', '⬛', '⚫', '⚪', '🔴', '🔵', '🔻', '🔶', '🔷', '🔸', '🔹'];
   return emojis[Math.floor(Math.random() * emojis.length)];
 }
 
-function loadNounArticles(noun) {
-  d3.selectAll('div.main-page__articles-container').selectAll('div.article-container').remove();
-  articlesJoin = d3.select('div.main-page__articles-container').selectAll('div.article').data(noun.articles).enter();
-  $articles = articlesJoin.append('div').attr('class', 'article-container').on('click', function (d) {
-    return window.open(d.url);
-  });
-  $articles.append('p').attr('class', 'article-meta').text(function (d) {
-    return "".concat(d.url.split('//')[1].split('/')[0], " \u2022 ").concat(d.pub_date);
-  });
-  $articles.append('p').attr('class', 'article-hed').text(function (d) {
-    return d.headline;
-  });
-  $articles.append('p').attr('class', 'article-snippet').html(function (d) {
-    return "<span>".concat(d.snippet, "</span>... <span class='click-more'>Click for full text</span>");
-  });
+function handleMouseOver(el, noun) {
+  console.log(d3.mouse(el)); // .attr('')
+  // let coordinates= d3.mouse(el);
+  // d3.select('.tooltip')
+  // .classed('hidden',false)
+  // .style("left", (d3.event.pageX) + "px")		
+  // .style("top", (d3.event.pageY - 28) + "px");	
 }
 
-function setNounVisibilityClass(noun, i, wordType) {
-  if (checkNoun(noun)) {
-    if (i < 6) return "noun ".concat(wordType);else return "noun ".concat(wordType, " hidden");
-  } else {
-    return 'expand-button';
-  }
-}
+function addArticles(data) {
+  console.log(data);
+  $content = d3.select('.content'); //verbs (top-level)
 
-function abbreviateNoun(word) {
-  var abbreviatedWord = word.length > 25 ? word.slice(0, 25).concat('...') : word;
-  return abbreviatedWord;
-}
+  verbJoin = $content.selectAll('div').data(data).enter();
+  $verb = verbJoin.append('div').attr('class', 'verb-container');
+  $verb.append('div').attr('class', 'verb-name').attr('id', function (d) {
+    return d.verb;
+  }).text(function (d) {
+    return d.verb;
+  }); //tooltip
 
-function handleExpandButton(el) {
-  var buttonClasses = d3.select(el).attr('class');
-  return buttonClasses.includes('expanded');
-}
+  var $tooltip = $verb.append('div').attr('class', 'tooltip hidden'); // tooltip sections
 
-function expandNouns(el) {
-  d3.select(el).classed('expanded', true);
-  d3.select(el).text('See fewer nouns');
-  d3.select(el.parentNode).selectAll('div.noun').classed('hidden', false);
-}
+  $tooltip.append('p').attr('class', 'tooltip__meta');
+  $tooltip.append('p').attr('class', 'tooltip__hed');
+  $tooltip.append('p').attr('class', 'tooltip__other-verbs'); // nouns (bottom-level)
 
-function contractNouns(el) {
-  var totalNouns = d3.select(el.parentNode).selectAll('div.noun').size();
-  d3.select(el.parentNode).selectAll('div.noun').classed('hidden', function (d, i) {
-    return i < 6 ? false : true;
-  });
-  d3.select(el).classed('expanded', false).text("Click for ".concat(totalNouns, " more..."));
-}
-
-function handleNounClick(el, noun) {
-  if (checkNoun(noun)) {
-    loadNounArticles(noun);
-  } else {
-    var expanded = handleExpandButton(el);
-    expanded ? contractNouns(el) : expandNouns(el);
-  }
-}
-
-function fillColumn(data, wordType) {
-  verbJoin = d3.select(".".concat(wordType, ".main-page__nav")).selectAll("div.verb-".concat(wordType)).data(data).enter();
-  $verbs = verbJoin.append('div');
-  $verbs.attr('class', function (d) {
-    return "verb-".concat(wordType, " verb verb-").concat(d.verb);
-  }).html(function (d) {
-    return "<span class='verb'>".concat(d.verb, "</span> <span class='count'>").concat(d.count, "x</span>");
-  });
-  nounJoin = $verbs.selectAll("div.noun-".concat(wordType)).data(function (d) {
-    allNounCount = d.nouns.length;
-    var nounsToAdd = d.nouns;
-
-    if (allNounCount < 6) {} else d.nouns.push("click for ".concat(allNounCount, " more..."));
-
-    return nounsToAdd;
+  nounJoin = $verb.selectAll('span').data(function (d) {
+    return d.nouns;
   }).enter();
-  $nouns = nounJoin.append('div');
-  $nouns.attr('class', function (noun, i) {
-    return setNounVisibilityClass(noun, i, wordType);
-  }).text(function (noun) {
-    var emoji = generateEmoji();
-
-    if (checkNoun(noun)) {
-      var shortNoun = abbreviateNoun(noun.noun);
-      return "".concat(shortNoun).concat(emoji);
-    } else return "".concat(noun).concat(emoji);
-  }).on('click', function (noun, i, n) {
-    return handleNounClick(n[i], noun);
-  });
+  $noun = nounJoin.append('div').attr('class', 'noun').text(function (d) {
+    return " ".concat(d.noun, " ").concat(generateEmoji(), " \xB7 ");
+  }).on('mouseenter', handleMouseEnter).on('mouseleave', handleMouseLeave).on('click', function (d) {
+    return window.open(d.articles[0].url);
+  }); // .on('mouseenter', (d,i,n)=>handleMouseOver(n[i],d))
+  // d3.select('body').on('mousemove',handleThing)
+  // window.on('mousemove',handleThing)
+  // d3.select(window).on('mousemove',handleThing)
 }
 
-function addWords() {
-  fillColumn(positiveVerbs, 'positive');
-  fillColumn(negativeVerbs, 'negative');
+function cleanData(data) {
+  var verbsToKeep = data[0].map(function (item) {
+    return item.verb;
+  });
+  console.log(verbsToKeep);
+  var allVerbs = data[1];
+  var filteredVerbs = allVerbs.filter(function (verb) {
+    return verbsToKeep.includes(verb.verb);
+  });
+  return filteredVerbs;
 }
 
 function init() {
-  //   d3.json('assets/data/articles.json')
-  d3.json('assets/data/articles_json_v2_small.json').then(function (data) {
-    return addInitialData(data);
-  }).then(function (addedData) {
-    return cleanData(addedData);
-  }).then(function () {
-    return addWords();
+  Promise.all([d3.csv("assets/data/verbs_to_include.csv"), d3.json("assets/data/articles_json_v2_small.json")]).then(function (data) {
+    return cleanData(data);
+  }).then(function (cleanedData) {
+    return addArticles(cleanedData);
   });
 }
 
