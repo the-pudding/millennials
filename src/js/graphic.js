@@ -1,4 +1,7 @@
 /* global d3 */
+import jump from 'jump.js'
+
+
 let $content;
 
 let verbJoin;
@@ -18,6 +21,7 @@ let articleNumber;
 let currentArticle = 0;
 
 let $nounSearch;
+let $verbSelect;
 
 
 function updateProgressBar(el){
@@ -185,6 +189,13 @@ function handleInputChange(){
 	// const start = $input.attr('data-start');
 }
 
+function scrollTo(element) {
+	jump(element, {
+		duration: 1000,
+		offset: -100
+	})
+}
+
 function addArticles(data){
     $nounSearch = d3.select('.search-noun__input')
     $nounSearch.on('keyup', handleInputChange)
@@ -197,6 +208,32 @@ function addArticles(data){
     verbJoin = $content.selectAll('div')
     .data(data)
     .enter()
+
+
+    // trash code select start
+    $verbSelect = d3.select('.search-verb__input')
+    .selectAll('option')
+    .data(data)
+    .enter()
+    .append('option')
+    .text(d=>d.verb)
+    .attr('value',d=>d.verb)
+
+    function handleDropDown(){
+        const athing = d3.select(this);
+        const valThis = this.value;
+        const scrollTarget = d3.select(`.verb-container-${valThis}`).node()
+        scrollTo(scrollTarget)
+        
+        // $verb.classed('hidden',d=>{
+        //     const truthValue = d.verb===valThis? false : true;
+        //     return truthValue;
+        // })
+    }
+
+    d3.select('.search-verb__input').on('change',handleDropDown)
+
+    //trash code select end
     
     $verb = verbJoin
     .append('div')

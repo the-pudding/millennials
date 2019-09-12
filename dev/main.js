@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"or4r":[function(require,module,exports) {
+})({"../../node_modules/lodash.debounce/index.js":[function(require,module,exports) {
 var global = arguments[3];
 /**
  * lodash (Custom Build) <https://lodash.com/>
@@ -497,7 +497,7 @@ function toNumber(value) {
 
 module.exports = debounce;
 
-},{}],"WEtf":[function(require,module,exports) {
+},{}],"utils/is-mobile.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -527,6 +527,171 @@ var isMobile = {
 };
 var _default = isMobile;
 exports.default = _default;
+},{}],"../../node_modules/jump.js/dist/jump.module.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+// Robert Penner's easeInOutQuad
+// find the rest of his easing functions here: http://robertpenner.com/easing/
+// find them exported for ES6 consumption here: https://github.com/jaxgeller/ez.js
+var easeInOutQuad = function easeInOutQuad(t, b, c, d) {
+  t /= d / 2;
+  if (t < 1) return c / 2 * t * t + b;
+  t--;
+  return -c / 2 * (t * (t - 2) - 1) + b;
+};
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+var jumper = function jumper() {
+  // private variable cache
+  // no variables are created during a jump, preventing memory leaks
+  var element = void 0; // element to scroll to                   (node)
+
+  var start = void 0; // where scroll starts                    (px)
+
+  var stop = void 0; // where scroll stops                     (px)
+
+  var offset = void 0; // adjustment from the stop position      (px)
+
+  var easing = void 0; // easing function                        (function)
+
+  var a11y = void 0; // accessibility support flag             (boolean)
+
+  var distance = void 0; // distance of scroll                     (px)
+
+  var duration = void 0; // scroll duration                        (ms)
+
+  var timeStart = void 0; // time scroll started                    (ms)
+
+  var timeElapsed = void 0; // time spent scrolling thus far          (ms)
+
+  var next = void 0; // next scroll position                   (px)
+
+  var callback = void 0; // to call when done scrolling            (function)
+  // scroll position helper
+
+  function location() {
+    return window.scrollY || window.pageYOffset;
+  } // element offset helper
+
+
+  function top(element) {
+    return element.getBoundingClientRect().top + start;
+  } // rAF loop helper
+
+
+  function loop(timeCurrent) {
+    // store time scroll started, if not started already
+    if (!timeStart) {
+      timeStart = timeCurrent;
+    } // determine time spent scrolling so far
+
+
+    timeElapsed = timeCurrent - timeStart; // calculate next scroll position
+
+    next = easing(timeElapsed, start, distance, duration); // scroll to it
+
+    window.scrollTo(0, next); // check progress
+
+    timeElapsed < duration ? window.requestAnimationFrame(loop) // continue scroll loop
+    : done(); // scrolling is done
+  } // scroll finished helper
+
+
+  function done() {
+    // account for rAF time rounding inaccuracies
+    window.scrollTo(0, start + distance); // if scrolling to an element, and accessibility is enabled
+
+    if (element && a11y) {
+      // add tabindex indicating programmatic focus
+      element.setAttribute('tabindex', '-1'); // focus the element
+
+      element.focus();
+    } // if it exists, fire the callback
+
+
+    if (typeof callback === 'function') {
+      callback();
+    } // reset time for next jump
+
+
+    timeStart = false;
+  } // API
+
+
+  function jump(target) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {}; // resolve options, or use defaults
+
+    duration = options.duration || 1000;
+    offset = options.offset || 0;
+    callback = options.callback; // "undefined" is a suitable default, and won't be called
+
+    easing = options.easing || easeInOutQuad;
+    a11y = options.a11y || false; // cache starting position
+
+    start = location(); // resolve target
+
+    switch (typeof target === 'undefined' ? 'undefined' : _typeof(target)) {
+      // scroll from current position
+      case 'number':
+        element = undefined; // no element to scroll to
+
+        a11y = false; // make sure accessibility is off
+
+        stop = start + target;
+        break;
+      // scroll to element (node)
+      // bounding rect is relative to the viewport
+
+      case 'object':
+        element = target;
+        stop = top(element);
+        break;
+      // scroll to element (selector)
+      // bounding rect is relative to the viewport
+
+      case 'string':
+        element = document.querySelector(target);
+        stop = top(element);
+        break;
+    } // resolve scroll distance, accounting for offset
+
+
+    distance = stop - start + offset; // resolve duration
+
+    switch (_typeof(options.duration)) {
+      // number in ms
+      case 'number':
+        duration = options.duration;
+        break;
+      // function passed the distance of the scroll
+
+      case 'function':
+        duration = options.duration(distance);
+        break;
+    } // start the loop
+
+
+    window.requestAnimationFrame(loop);
+  } // expose only the jump method
+
+
+  return jump;
+}; // export singleton
+
+
+var singleton = jumper();
+var _default = singleton;
+exports.default = _default;
 },{}],"graphic.js":[function(require,module,exports) {
 "use strict";
 
@@ -535,11 +700,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
+var _jump = _interopRequireDefault(require("jump.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-/* global d3 */
 var $content;
 var verbJoin;
 var nounJoin;
@@ -554,6 +722,7 @@ var barUpdater;
 var articleNumber;
 var currentArticle = 0;
 var $nounSearch;
+var $verbSelect;
 
 function updateProgressBar(el) {
   var $foregroundBar = d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-foreground');
@@ -677,13 +846,39 @@ function handleInputChange() {
 
 }
 
+function scrollTo(element) {
+  (0, _jump.default)(element, {
+    duration: 1000,
+    offset: -100
+  });
+}
+
 function addArticles(data) {
   $nounSearch = d3.select('.search-noun__input');
   $nounSearch.on('keyup', handleInputChange);
   console.log(data);
   $content = d3.select('.content'); //verbs (top-level)
 
-  verbJoin = $content.selectAll('div').data(data).enter();
+  verbJoin = $content.selectAll('div').data(data).enter(); // trash code select start
+
+  $verbSelect = d3.select('.search-verb__input').selectAll('option').data(data).enter().append('option').text(function (d) {
+    return d.verb;
+  }).attr('value', function (d) {
+    return d.verb;
+  });
+
+  function handleDropDown() {
+    var athing = d3.select(this);
+    var valThis = this.value;
+    var scrollTarget = d3.select(".verb-container-".concat(valThis)).node();
+    scrollTo(scrollTarget); // $verb.classed('hidden',d=>{
+    //     const truthValue = d.verb===valThis? false : true;
+    //     return truthValue;
+    // })
+  }
+
+  d3.select('.search-verb__input').on('change', handleDropDown); //trash code select end
+
   $verb = verbJoin.append('div').attr('class', function (d) {
     return "verb-container verb-container-".concat(d.verb);
   });
@@ -751,7 +946,7 @@ var _default = {
   resize: resize
 };
 exports.default = _default;
-},{}],"v9Q8":[function(require,module,exports) {
+},{"jump.js":"../../node_modules/jump.js/dist/jump.module.js"}],"footer.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -850,7 +1045,7 @@ var _default = {
   init: init
 };
 exports.default = _default;
-},{}],"epB2":[function(require,module,exports) {
+},{}],"main.js":[function(require,module,exports) {
 "use strict";
 
 var _lodash = _interopRequireDefault(require("lodash.debounce"));
@@ -908,5 +1103,5 @@ function init() {
 }
 
 init();
-},{"lodash.debounce":"or4r","./utils/is-mobile":"WEtf","./graphic":"graphic.js","./footer":"v9Q8"}]},{},["epB2"], null)
+},{"lodash.debounce":"../../node_modules/lodash.debounce/index.js","./utils/is-mobile":"utils/is-mobile.js","./graphic":"graphic.js","./footer":"footer.js"}]},{},["main.js"], null)
 //# sourceMappingURL=/main.js.map
