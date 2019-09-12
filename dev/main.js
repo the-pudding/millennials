@@ -535,6 +535,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 /* global d3 */
 var $content;
 var verbJoin;
@@ -549,6 +553,7 @@ var barWidthPx;
 var barUpdater;
 var articleNumber;
 var currentArticle = 0;
+var $nounSearch;
 
 function updateProgressBar(el) {
   var $foregroundBar = d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-foreground');
@@ -644,12 +649,38 @@ function handleMouseOver(el, noun) {
   // .style("top", (d3.event.pageY - 28) + "px");	
 }
 
+function handleInputChange() {
+  var $input = d3.select(this);
+  var val = this.value.toLowerCase();
+  console.log(val);
+  $noun.style('font-size', function (d) {
+    if (d.noun.includes(val)) {
+      return '48px';
+    } else return '14px';
+  });
+  $verb.classed('hidden', function (d) {
+    var nounMatch = d.nounList.filter(function (item) {
+      return item.includes(val);
+    });
+
+    if (nounMatch.length >= 1) {
+      return false;
+    } else {
+      return true;
+    }
+  }); // const start = $input.attr('data-start');
+}
+
 function addArticles(data) {
+  $nounSearch = d3.select('.search-noun__input');
+  $nounSearch.on('keyup', handleInputChange);
   console.log(data);
   $content = d3.select('.content'); //verbs (top-level)
 
   verbJoin = $content.selectAll('div').data(data).enter();
-  $verb = verbJoin.append('div').attr('class', 'verb-container');
+  $verb = verbJoin.append('div').attr('class', function (d) {
+    return "verb-container verb-container-".concat(d.verb);
+  });
   $verb.append('div').attr('class', 'verb-name').attr('id', function (d) {
     return d.verb;
   }).text(function (d) {
@@ -682,12 +713,23 @@ function cleanData(data) {
   var verbsToKeep = data[0].map(function (item) {
     return item.verb;
   });
-  console.log(verbsToKeep);
   var allVerbs = data[1];
   var filteredVerbs = allVerbs.filter(function (verb) {
     return verbsToKeep.includes(verb.verb);
   });
-  return filteredVerbs;
+  var formattedVerbs = filteredVerbs.map(function (verb) {
+    return _objectSpread({}, verb, {
+      nounList: verb.nouns.map(function (item) {
+        return item.noun;
+      }),
+      nouns: verb.nouns.map(function (noun) {
+        return _objectSpread({}, noun, {
+          nounLevelVerb: verb.verb
+        });
+      })
+    });
+  });
+  return formattedVerbs;
 }
 
 function init() {

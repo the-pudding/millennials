@@ -17,6 +17,8 @@ let barUpdater;
 let articleNumber;
 let currentArticle = 0;
 
+let $nounSearch;
+
 
 function updateProgressBar(el){
 
@@ -156,8 +158,31 @@ function handleMouseOver(el, noun){
     // .style("top", (d3.event.pageY - 28) + "px");	
 }
 
+function handleInputChange(){
+    const $input = d3.select(this);
+    const val = this.value.toLowerCase();
+
+    console.log(val)
+    
+    $noun.style('font-size',d=>{
+        if (d.noun.includes(val)){return '48px'}
+        else return '14px'
+    })
+
+    $verb.classed('hidden',d=>{            
+        const nounMatch = d.nounList.filter(item=>item.includes(val));
+        if (nounMatch.length>=1){return false}
+        else {return true}
+    })
+
+
+	// const start = $input.attr('data-start');
+}
 
 function addArticles(data){
+    $nounSearch = d3.select('.search-noun__input')
+    $nounSearch.on('keyup', handleInputChange)
+
     console.log(data)
     $content = d3.select('.content');
 
@@ -169,7 +194,7 @@ function addArticles(data){
     
     $verb = verbJoin
     .append('div')
-    .attr('class','verb-container')
+    .attr('class',d=>`verb-container verb-container-${d.verb}`)
     
     $verb.append('div')
     .attr('class','verb-name')
@@ -232,11 +257,19 @@ function addArticles(data){
 
 function cleanData(data){
     const verbsToKeep = data[0].map(item=>item.verb);
-    console.log(verbsToKeep)
     const allVerbs = data[1];
     const filteredVerbs = allVerbs.filter(verb=>verbsToKeep.includes(verb.verb))
 
-    return filteredVerbs;
+    const formattedVerbs = filteredVerbs.map(verb=>({
+        ...verb,
+        nounList: verb.nouns.map(item=>item.noun),
+        nouns: verb.nouns.map(noun=>({
+            ...noun,            
+            nounLevelVerb: verb.verb
+        }))
+    }))
+    
+    return formattedVerbs;
 }
 
 function init() {   
