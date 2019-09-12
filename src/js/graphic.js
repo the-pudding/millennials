@@ -15,11 +15,15 @@ let barWidthPx;
 let barUpdater;
 
 let articleNumber;
+let currentArticle = 0;
 
 
 function updateProgressBar(el){
 
     const $foregroundBar = d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-foreground')
+
+    $foregroundBar.style('width','0px') 
+
     backgroundBarWidthPx = +d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-background').style('width').replace('px','')
     console.log(backgroundBarWidthPx)
 
@@ -33,25 +37,26 @@ function updateProgressBar(el){
         barWidthPx = +$foregroundBar.style('width').replace('px','')
         barWidthPx += step
 
-        if(barWidthPx>backgroundBarWidthPx){
-            clearInterval(barUpdater)
+        if(barWidthPx === backgroundBarWidthPx){
+            $foregroundBar.style('width',`${barWidthPx}px`)  
+            clearInterval(barUpdater)               
+                   
         }   
-
-        $foregroundBar.style('width',`${barWidthPx}px`)                            
+        $foregroundBar.style('width',`${barWidthPx}px`)                                            
     }
     
 }
 
-function updateTooltip(d, el, $tooltip){
-
+function updateTooltip(d, el, $tooltip, currentArticle){
+    `currentArticle: ${currentArticle}`
     // show tooltip, load data
     $tooltip.classed('hidden', false)
 
     $tooltip.select('p.tooltip__meta')
-    .text(`${d.articles[0].url.split('//')[1].split('/')[0]} • ${d.articles[0].pub_date}`)  
+    .text(`${d.articles[currentArticle].url.split('//')[1].split('/')[0]} • ${d.articles[currentArticle].pub_date}`)  
     
     $tooltip.select('p.tooltip__hed')
-    .text(`${d.articles[0].headline}`)   
+    .text(`${d.articles[currentArticle].headline}`)   
 
     $tooltip.select('p.tooltip__other-verbs')
     .html(()=>{
@@ -65,7 +70,11 @@ function updateTooltip(d, el, $tooltip){
     $tooltip
     .style('left',`${x}px`)
     .style('top', `-10px`)
+
+    
 }
+
+
 
 function handleMouseEnter(d){
     
@@ -75,16 +84,31 @@ function handleMouseEnter(d){
 	const $selVerb = d3.select(el.parentNode);
     const $tooltip = $selVerb.select('.tooltip')
 
-    const articlesNumber = d.articles.length
-    
-    
-    updateTooltip(d, el, $tooltip)
+    articleNumber = d.articles.length;
 
+    updateTooltip(d, el, $tooltip, currentArticle)    
     updateProgressBar(el)
 
+    if (articleNumber>1){
+        currentArticle+=1
+        const testUpdater = setInterval(testUpdate,5000)
+        let testVar = 0
+        function testUpdate(){
+    
+            if(currentArticle===articleNumber){
+                clearInterval(testUpdater)
+            }
+        updateTooltip(d, el, $tooltip, currentArticle)    
+        updateProgressBar(el)
+        currentArticle+=1
+        }
+    }
 }
 
 function handleMouseLeave(){
+
+    currentArticle = 0;
+    articleNumber = 0;
 
     clearInterval(barUpdater)
 

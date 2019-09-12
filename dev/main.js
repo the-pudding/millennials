@@ -548,9 +548,11 @@ var backgroundBarWidthPx;
 var barWidthPx;
 var barUpdater;
 var articleNumber;
+var currentArticle = 0;
 
 function updateProgressBar(el) {
   var $foregroundBar = d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-foreground');
+  $foregroundBar.style('width', '0px');
   backgroundBarWidthPx = +d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-background').style('width').replace('px', '');
   console.log(backgroundBarWidthPx);
   var step = backgroundBarWidthPx / 100;
@@ -561,7 +563,8 @@ function updateProgressBar(el) {
     barWidthPx = +$foregroundBar.style('width').replace('px', '');
     barWidthPx += step;
 
-    if (barWidthPx > backgroundBarWidthPx) {
+    if (barWidthPx === backgroundBarWidthPx) {
+      $foregroundBar.style('width', "".concat(barWidthPx, "px"));
       clearInterval(barUpdater);
     }
 
@@ -569,11 +572,12 @@ function updateProgressBar(el) {
   }
 }
 
-function updateTooltip(d, el, $tooltip) {
-  // show tooltip, load data
+function updateTooltip(d, el, $tooltip, currentArticle) {
+  "currentArticle: ".concat(currentArticle); // show tooltip, load data
+
   $tooltip.classed('hidden', false);
-  $tooltip.select('p.tooltip__meta').text("".concat(d.articles[0].url.split('//')[1].split('/')[0], " \u2022 ").concat(d.articles[0].pub_date));
-  $tooltip.select('p.tooltip__hed').text("".concat(d.articles[0].headline));
+  $tooltip.select('p.tooltip__meta').text("".concat(d.articles[currentArticle].url.split('//')[1].split('/')[0], " \u2022 ").concat(d.articles[currentArticle].pub_date));
+  $tooltip.select('p.tooltip__hed').text("".concat(d.articles[currentArticle].headline));
   $tooltip.select('p.tooltip__other-verbs').html(function () {
     var additionalArticles = d.articles.length > 1 ? "<span class='noun-selected'>".concat(generateEmoji(), " ").concat(d.noun, "</span> is also found in these verbs: <span class='additional-verbs'>").concat(d.other_verbs.join(', '), "</span>") : "";
     return additionalArticles;
@@ -589,12 +593,30 @@ function handleMouseEnter(d) {
   var $sel = d3.select(el);
   var $selVerb = d3.select(el.parentNode);
   var $tooltip = $selVerb.select('.tooltip');
-  var articlesNumber = d.articles.length;
-  updateTooltip(d, el, $tooltip);
+  articleNumber = d.articles.length;
+  updateTooltip(d, el, $tooltip, currentArticle);
   updateProgressBar(el);
+
+  if (articleNumber > 1) {
+    var testUpdate = function testUpdate() {
+      if (currentArticle === articleNumber) {
+        clearInterval(testUpdater);
+      }
+
+      updateTooltip(d, el, $tooltip, currentArticle);
+      updateProgressBar(el);
+      currentArticle += 1;
+    };
+
+    currentArticle += 1;
+    var testUpdater = setInterval(testUpdate, 5000);
+    var testVar = 0;
+  }
 }
 
 function handleMouseLeave() {
+  currentArticle = 0;
+  articleNumber = 0;
   clearInterval(barUpdater);
   d3.selectAll('.tooltip__progress-bar-foreground').style('width', '0px');
   d3.selectAll('.tooltip').classed('hidden', true);
