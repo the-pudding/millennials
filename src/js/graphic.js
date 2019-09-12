@@ -9,18 +9,43 @@ let $verb;
 let $noun;
 let $articles;
 
-function handleMouseEnter(d){
-    
-    console.log(d)
-    const el = this;
-    const $sel = d3.select(el)
-	const $selVerb = d3.select(el.parentNode);
+let $progressBar;
+let backgroundBarWidthPx;
+let barWidthPx;
+let barUpdater;
 
-    const $tooltip = $selVerb.select('.tooltip')
+let articleNumber;
+
+
+function updateProgressBar(el){
+
+    const $foregroundBar = d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-foreground')
+    backgroundBarWidthPx = +d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-background').style('width').replace('px','')
+    console.log(backgroundBarWidthPx)
+
+    const step = backgroundBarWidthPx/100;
+
+    let barPercentage;
+    barUpdater = setInterval(updateFunction, 50);
+
+    function updateFunction(){        
+
+        barWidthPx = +$foregroundBar.style('width').replace('px','')
+        barWidthPx += step
+
+        if(barWidthPx>backgroundBarWidthPx){
+            clearInterval(barUpdater)
+        }   
+
+        $foregroundBar.style('width',`${barWidthPx}px`)                            
+    }
     
+}
+
+function updateTooltip(d, el, $tooltip){
+
     // show tooltip, load data
     $tooltip.classed('hidden', false)
-
 
     $tooltip.select('p.tooltip__meta')
     .text(`${d.articles[0].url.split('//')[1].split('/')[0]} • ${d.articles[0].pub_date}`)  
@@ -35,18 +60,44 @@ function handleMouseEnter(d){
     })   
 
     const x = el.offsetLeft;
-    const y = el.offsetTop;
-    console.log(y)
+    const y = el.offsetTop;    
 
     $tooltip
     .style('left',`${x}px`)
     .style('top', `-10px`)
+}
+
+function handleMouseEnter(d){
+    
+    console.log(d)
+    const el = this;
+    const $sel = d3.select(el)
+	const $selVerb = d3.select(el.parentNode);
+    const $tooltip = $selVerb.select('.tooltip')
+
+    const articlesNumber = d.articles.length
+    
+    
+    updateTooltip(d, el, $tooltip)
+
+    updateProgressBar(el)
 
 }
 
 function handleMouseLeave(){
+
+    clearInterval(barUpdater)
+
+    d3.selectAll('.tooltip__progress-bar-foreground')
+    .style('width','0px')
+
     d3.selectAll('.tooltip')
-    .classed('hidden', true)
+    .classed('hidden', true)    
+    
+
+
+
+    
 }
 
 
@@ -101,12 +152,21 @@ function addArticles(data){
     .attr('id', d=>d.verb)
     .text(d=>d.verb)
 
-    //tooltip
+    //tooltip:
     const $tooltip = $verb
     .append('div')
     .attr('class','tooltip hidden')
 
-    // tooltip sections
+    // tooltip: progress bar
+    $progressBar = $tooltip
+    .append('div')
+    .attr('class','tooltip__progress-bar-background')
+
+    $progressBar
+    .append('div')
+    .attr('class', 'tooltip__progress-bar-foreground')
+
+    // tooltip: text sections
     $tooltip
     .append('p')
     .attr('class','tooltip__meta');

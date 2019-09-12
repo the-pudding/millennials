@@ -543,14 +543,34 @@ var articlesJoin;
 var $verb;
 var $noun;
 var $articles;
+var $progressBar;
+var backgroundBarWidthPx;
+var barWidthPx;
+var barUpdater;
+var articleNumber;
 
-function handleMouseEnter(d) {
-  console.log(d);
-  var el = this;
-  var $sel = d3.select(el);
-  var $selVerb = d3.select(el.parentNode);
-  var $tooltip = $selVerb.select('.tooltip'); // show tooltip, load data
+function updateProgressBar(el) {
+  var $foregroundBar = d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-foreground');
+  backgroundBarWidthPx = +d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-background').style('width').replace('px', '');
+  console.log(backgroundBarWidthPx);
+  var step = backgroundBarWidthPx / 100;
+  var barPercentage;
+  barUpdater = setInterval(updateFunction, 50);
 
+  function updateFunction() {
+    barWidthPx = +$foregroundBar.style('width').replace('px', '');
+    barWidthPx += step;
+
+    if (barWidthPx > backgroundBarWidthPx) {
+      clearInterval(barUpdater);
+    }
+
+    $foregroundBar.style('width', "".concat(barWidthPx, "px"));
+  }
+}
+
+function updateTooltip(d, el, $tooltip) {
+  // show tooltip, load data
   $tooltip.classed('hidden', false);
   $tooltip.select('p.tooltip__meta').text("".concat(d.articles[0].url.split('//')[1].split('/')[0], " \u2022 ").concat(d.articles[0].pub_date));
   $tooltip.select('p.tooltip__hed').text("".concat(d.articles[0].headline));
@@ -560,11 +580,23 @@ function handleMouseEnter(d) {
   });
   var x = el.offsetLeft;
   var y = el.offsetTop;
-  console.log(y);
   $tooltip.style('left', "".concat(x, "px")).style('top', "-10px");
 }
 
+function handleMouseEnter(d) {
+  console.log(d);
+  var el = this;
+  var $sel = d3.select(el);
+  var $selVerb = d3.select(el.parentNode);
+  var $tooltip = $selVerb.select('.tooltip');
+  var articlesNumber = d.articles.length;
+  updateTooltip(d, el, $tooltip);
+  updateProgressBar(el);
+}
+
 function handleMouseLeave() {
+  clearInterval(barUpdater);
+  d3.selectAll('.tooltip__progress-bar-foreground').style('width', '0px');
   d3.selectAll('.tooltip').classed('hidden', true);
 }
 
@@ -600,9 +632,12 @@ function addArticles(data) {
     return d.verb;
   }).text(function (d) {
     return d.verb;
-  }); //tooltip
+  }); //tooltip:
 
-  var $tooltip = $verb.append('div').attr('class', 'tooltip hidden'); // tooltip sections
+  var $tooltip = $verb.append('div').attr('class', 'tooltip hidden'); // tooltip: progress bar
+
+  $progressBar = $tooltip.append('div').attr('class', 'tooltip__progress-bar-background');
+  $progressBar.append('div').attr('class', 'tooltip__progress-bar-foreground'); // tooltip: text sections
 
   $tooltip.append('p').attr('class', 'tooltip__meta');
   $tooltip.append('p').attr('class', 'tooltip__hed');

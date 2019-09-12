@@ -1,1 +1,0 @@
-{"id":"H/v5","dependencies":[{"name":"/Users/iblinderman/Downloads/millennials/package.json","includedInParent":true,"mtime":1567024574414}],"generated":{"js":"String.prototype.startsWith||(String.prototype.startsWith=function(t,r){return this.substr(r||0,t.length)===t});"},"sourceMaps":null,"error":null,"hash":"95ce56291f257c8f5a32b49cf3b1bd06","cacheData":{"env":{}}}
