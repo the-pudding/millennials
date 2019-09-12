@@ -162,18 +162,24 @@ function handleInputChange(){
     const $input = d3.select(this);
     const val = this.value.toLowerCase();
 
-    console.log(val)
+    if(val==''){
+        $noun.style('font-size','14px')
+        $verb.classed('hidden',false)
+    }
+    else{
+        $noun.style('font-size',d=>{
+            if (d.noun.includes(val)){return '48px'}
+            else return '14px'
+        })
     
-    $noun.style('font-size',d=>{
-        if (d.noun.includes(val)){return '48px'}
-        else return '14px'
-    })
+        $verb.classed('hidden',d=>{            
+            const nounMatch = d.nounList.filter(item=>item.includes(val));
+            if (nounMatch.length>=1){return false}
+            else {return true}
+        })
+    }
+    
 
-    $verb.classed('hidden',d=>{            
-        const nounMatch = d.nounList.filter(item=>item.includes(val));
-        if (nounMatch.length>=1){return false}
-        else {return true}
-    })
 
 
 	// const start = $input.attr('data-start');

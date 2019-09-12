@@ -652,23 +652,29 @@ function handleMouseOver(el, noun) {
 function handleInputChange() {
   var $input = d3.select(this);
   var val = this.value.toLowerCase();
-  console.log(val);
-  $noun.style('font-size', function (d) {
-    if (d.noun.includes(val)) {
-      return '48px';
-    } else return '14px';
-  });
-  $verb.classed('hidden', function (d) {
-    var nounMatch = d.nounList.filter(function (item) {
-      return item.includes(val);
-    });
 
-    if (nounMatch.length >= 1) {
-      return false;
-    } else {
-      return true;
-    }
-  }); // const start = $input.attr('data-start');
+  if (val == '') {
+    $noun.style('font-size', '14px');
+    $verb.classed('hidden', false);
+  } else {
+    $noun.style('font-size', function (d) {
+      if (d.noun.includes(val)) {
+        return '48px';
+      } else return '14px';
+    });
+    $verb.classed('hidden', function (d) {
+      var nounMatch = d.nounList.filter(function (item) {
+        return item.includes(val);
+      });
+
+      if (nounMatch.length >= 1) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+  } // const start = $input.attr('data-start');
+
 }
 
 function addArticles(data) {
