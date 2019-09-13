@@ -1,6 +1,5 @@
 /* global d3 */
-import jump from 'jump.js'
-
+import jump from 'jump.js';
 
 let $content;
 
@@ -23,6 +22,7 @@ let currentArticle = 0;
 let $nounSearch;
 let $verbSelect;
 
+let formattedVerbs;
 
 function updateProgressBar(el){
 
@@ -162,13 +162,16 @@ function handleMouseOver(el, noun){
     // .style("top", (d3.event.pageY - 28) + "px");	
 }
 
-function handleInputChange(){
+function handleInputChange(){    
+    
     const $input = d3.select(this);
     const val = this.value.toLowerCase();
+    handleMouseLeave();
 
     if(val==''){
         $noun.style('font-size','14px')
         $verb.classed('hidden',false)
+        handleMouseLeave();
     }
     else{
         $noun.style('font-size',d=>{
@@ -176,7 +179,8 @@ function handleInputChange(){
             else return '14px'
         })
     
-        $verb.classed('hidden',d=>{            
+        $verb.classed('hidden',d=>{           
+            handleMouseLeave(); 
             const nounMatch = d.nounList.filter(item=>item.includes(val));
             if (nounMatch.length>=1){return false}
             else {return true}
@@ -196,7 +200,15 @@ function scrollTo(element) {
 	})
 }
 
+function handleDropDown(){    
+    const athing = d3.select(this);
+    const valThis = athing.text();        
+    const scrollTarget = d3.select(`.verb-container-${valThis}`).node()
+    scrollTo(scrollTarget)
+}
+
 function addArticles(data){
+
     $nounSearch = d3.select('.search-noun__input')
     $nounSearch.on('keyup', handleInputChange)
 
@@ -211,27 +223,19 @@ function addArticles(data){
 
 
     // trash code select start
-    $verbSelect = d3.select('.search-verb__input')
-    .selectAll('option')
-    .data(data)
-    .enter()
-    .append('option')
-    .text(d=>d.verb)
-    .attr('value',d=>d.verb)
 
-    function handleDropDown(){
-        const athing = d3.select(this);
-        const valThis = this.value;
-        const scrollTarget = d3.select(`.verb-container-${valThis}`).node()
-        scrollTo(scrollTarget)
-        
-        // $verb.classed('hidden',d=>{
-        //     const truthValue = d.verb===valThis? false : true;
-        //     return truthValue;
-        // })
-    }
 
-    d3.select('.search-verb__input').on('change',handleDropDown)
+    // $verbSelect = d3.select('.search-verb__input')
+    // .selectAll('option')
+    // .data(data)
+    // .enter()
+    // .append('option')
+    // .text(d=>d.verb)
+    // .attr('value',d=>d.verb)
+
+
+
+    // d3.select('.search-verb__input').on('change',handleDropDown)
 
     //trash code select end
     
@@ -287,7 +291,15 @@ function addArticles(data){
     .on('mouseleave', handleMouseLeave)
     .on('click', d=> window.open(d.articles[0].url))
 
+    const verbDropDown = d3.select('.search-verb__input').node()
 
+    const verbDropDownChoices = new Choices(verbDropDown, {
+        choices: formattedVerbs.map(
+          value=>({ value, label: `${value.verb}` })
+        )
+      })
+
+    d3.select(verbDropDown).on('change',handleDropDown)
 
 
 
@@ -303,7 +315,7 @@ function cleanData(data){
     const allVerbs = data[1];
     const filteredVerbs = allVerbs.filter(verb=>verbsToKeep.includes(verb.verb))
 
-    const formattedVerbs = filteredVerbs.map(verb=>({
+    formattedVerbs = filteredVerbs.map(verb=>({
         ...verb,
         nounList: verb.nouns.map(item=>item.noun),
         nouns: verb.nouns.map(noun=>({

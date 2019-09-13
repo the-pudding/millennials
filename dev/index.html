@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang='en' data-version='1568309259376'>
+<html lang='en' data-version='1568411736128'>
 
 <head>
 
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
 	<link inline rel='stylesheet' href='bundle.css' />
     <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 	<style>
@@ -232,11 +233,11 @@
 		        <nav class='nav-bar'>
 		            
 		            <div class='search-verb'>
-		                <select class='search-verb__input'></select>
+		                <select class='search-verb__input' id='search-verb__input'></select>
 		            </div>
-		            <div class='search-noun'>
-		                <input class='search-noun__input'>
-		            </div>
+		            <form class='search-noun'>
+		                <input class='search-noun__input' type="text" name="search" placeholder="search by noun">
+		            </form>
 		        </nav>
 		        <div class='content'>
 		            <div class='tooltip hidden'></div>
@@ -252,7 +253,8 @@
 
     
 	<script src='assets/scripts/d3.v5.10.0.min.js'></script>
-	<script src='main.js?version=1568309259376' async></script>
+	<script src='main.js?version=1568411736128' async></script>
+    <script src="assets/scripts/choices.min.js"></script>
 </body>
 
 </html>
