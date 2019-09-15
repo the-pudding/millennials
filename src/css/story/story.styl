@@ -52,21 +52,34 @@
 
     &__sidebar        
         height 100%
-        width  5rem
+        width  3rem
         position fixed
         z-index: 1
         top 0
         left 0
         display flex
         flex-direction: column
-        justify-content: space-evenly
+        justify-content: space-between
+        padding-top 1rem
+        padding-bottom 1rem
+        padding-left 1rem
     
     &__content
-        margin-left: 5rem
+        margin-left: 3rem
+
+.content
+    padding-left 1rem
+
+
+.mark
+    max-width: 2reml
 
 .button
     text-align: center
     max-width: 30%
+    font-size: 32px
+    padding-bottom: 1rem
+    cursor pointer
 
 .mono
     font-family 'Menlo','Consolas','Monaco','Courier New',monospace
@@ -112,17 +125,65 @@
     font-color black
     background-color gray
 
-.search-noun__input
-    width 100%
-    box-sizing border-box
-    border 2px solid #ccc
-    border-radius 4px
-    font-size 16px
-    background-color black
-    background-image url('assets/images/search.png')
-    background-position 10px 10px
-    background-repeat: no-repeat
-    padding 12px 20px 12px 40px
+.search-noun
+    padding-right 3rem
+
+    &__input
+        width 100%
+        box-sizing border-box
+        border 2px solid #ccc
+        border-radius 4px
+        font-size 16px
+        background-color black
+        background-image url('assets/images/search.png')
+        background-position 10px 10px
+        background-repeat: no-repeat
+        padding 12px 20px 12px 40px
+        font-family: 'Share Tech Mono', monospace;
+        color #ccc
+
+.choices__list--single
     font-family: 'Share Tech Mono', monospace;
 
+.choices
+    border-bottom: 1px gray solid
 
+    &__inner
+        background-color: #282828    
+        color white
+        border: 0
+
+.choices__item--selectable
+    font-size: 48px
+
+.search-verb
+    width 20rem
+    
+.fixed-search-bar
+    width 100%
+    z-index 100
+    position: fixed
+    background: #282828
+
+.nav-container
+    display: flex
+    flex-direction: column
+    padding 1rem
+
+.nav-label    
+    font-size: 24px
+    color white
+    font-family: 'Share Tech Mono', monospace;
+
+.nav-bar
+    display: flex
+    flex-direction: row
+    justify-content: space-between    
+
+.separator
+    font-size 36px
+    padding-top 2rem
+    color white
+    
+.faded
+    color gray    

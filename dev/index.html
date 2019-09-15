@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang='en' data-version='1568411736128'>
+<html lang='en' data-version='1568555953627'>
 
 <head>
 
@@ -221,24 +221,31 @@
 		
 		<section class='main-page'>    
 		    <div class='main-page__sidebar'>
-		        <div class='button'><img src='assets/images/P_logo.svg'></div>
-		        <div class='button button-positive-high'>😁</div>
-		        <div class='button button-positive-low'>🙂</div>
-		        <div class='button button-neutral'>😐</div>
-		        <div class='button button-negative-high'>🙁</div>
-		        <div class='button button-negative-low'>😱</div>
-		        
+		        <div class='mark'><a href='https://www.pudding.cool'><img src='assets/images/P_logo.svg'></a></div>
+		        <div class='button-container'>
+		            <div class='button button-positive-high'>😁</div>
+		            <div class='button button-positive-low'>🙂</div>
+		            <div class='button button-neutral'>😐</div>
+		            <div class='button button-negative-low'>🙁</div>
+		            <div class='button button-negative-high'>😱</div>
+		        </div>
+		        <div class='info'><img src='assets/images/info.svg'></div>
 		    </div>
 		    <div class='main-page__content mono'>
-		        <nav class='nav-bar'>
-		            
-		            <div class='search-verb'>
-		                <select class='search-verb__input' id='search-verb__input'></select>
+		        <div class='fixed-search-bar'>
+		            <div class='nav-container'>
+		                <div class='nav-label'>Millennials  </div>
+		                <nav class='nav-bar'>
+		                    
+		                    <div class='search-verb'>
+		                        <select class='search-verb__input' id='search-verb__input'></select>
+		                    </div>
+		                    <form class='search-noun'>
+		                        <input class='search-noun__input' type="text" name="search" placeholder="search by noun">
+		                    </form>
+		                </nav>
 		            </div>
-		            <form class='search-noun'>
-		                <input class='search-noun__input' type="text" name="search" placeholder="search by noun">
-		            </form>
-		        </nav>
+		        </div>
 		        <div class='content'>
 		            <div class='tooltip hidden'></div>
 		        </div>        
@@ -253,7 +260,7 @@
 
     
 	<script src='assets/scripts/d3.v5.10.0.min.js'></script>
-	<script src='main.js?version=1568411736128' async></script>
+	<script src='main.js?version=1568555953627' async></script>
     <script src="assets/scripts/choices.min.js"></script>
 </body>
 

@@ -10,6 +10,7 @@ let articlesJoin;
 let $verb;
 let $noun;
 let $articles;
+let $separators;
 
 let $progressBar;
 let backgroundBarWidthPx;
@@ -23,6 +24,7 @@ let $nounSearch;
 let $verbSelect;
 
 let formattedVerbs;
+let fixedSearchHeight;
 
 function updateProgressBar(el){
 
@@ -31,7 +33,7 @@ function updateProgressBar(el){
     $foregroundBar.style('width','0px') 
 
     backgroundBarWidthPx = +d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-background').style('width').replace('px','')
-    console.log(backgroundBarWidthPx)
+    // console.log(backgroundBarWidthPx)
 
     const step = backgroundBarWidthPx/100;
 
@@ -123,22 +125,73 @@ function handleMouseLeave(){
 
     d3.selectAll('.tooltip')
     .classed('hidden', true)    
-    
-
-
 
     
+    $noun.classed('faded',false)
 }
 
 
 function resize() {}
 
-// function checkNoun(noun){
-//     if (noun.hasOwnProperty('noun')){
-//         return true;
-//     }
-//     return false;
-// }
+function setSentimentScroll(){
+    const parentDiv = d3.select('div.content').node()
+
+    const posHighFirstEl = d3.select('.verb-container-love').node();
+    const sepPositiveHigh = document.createElement('div');
+    sepPositiveHigh.className = 'separator separator__positive-high';
+    sepPositiveHigh.innerHTML='😁 highly positive sentiments'
+    
+    const posLowFirstEl = d3.select('.verb-container-favor').node();
+    const sepPositiveLow = document.createElement('div');
+    sepPositiveLow.className = 'separator separator__positive-low';  
+    sepPositiveLow.innerHTML = '🙂 positive sentiments';
+    
+    const neutralFirstEl = d3.select('.verb-container-say').node();
+    const sepNeutral = document.createElement('div');
+    sepNeutral.className = 'separator separator__neutral';
+    sepNeutral.innerHTML = '😐 neutral sentiments';
+    
+    const negLowFirstEl = d3.select('.verb-container-leave').node();
+    const sepNegativeLow = document.createElement('div');
+    sepNegativeLow.className = 'separator separator__negative-low';
+    sepNegativeLow.innerHTML = '🙁 negative sentiments'
+    
+    const negHighFirstEl = d3.select('.verb-container-hate').node();
+    const sepNegativeHigh = document.createElement('div');
+    sepNegativeHigh.className = 'separator separator__negative-high';
+    sepNegativeHigh.innerHTML = '😱 highly negative sentiments'
+    
+    parentDiv.insertBefore(sepPositiveHigh, posHighFirstEl);
+    parentDiv.insertBefore(sepPositiveLow, posLowFirstEl);
+    parentDiv.insertBefore(sepNeutral, neutralFirstEl);
+    parentDiv.insertBefore(sepNegativeLow, negLowFirstEl);
+    parentDiv.insertBefore(sepNegativeHigh, negHighFirstEl);
+
+    // const verbEl = d3.select(this);
+    // const verbValue = verbEl.text();        
+    // const scrollTarget = d3.select(`.verb-container-${verbValue}`).node()
+    
+
+    d3.select('.button-positive-high').on('click',()=>{
+        scrollTo(d3.select('.separator__positive-high').node())
+    })
+
+    d3.select('.button-positive-low').on('click',()=>{
+        scrollTo(d3.select('.separator__positive-low').node())
+    })
+
+    d3.select('.button-negative-low').on('click',()=>{
+        scrollTo(d3.select('.separator__negative-low').node())
+    })
+
+    d3.select('.button-negative-high').on('click',()=>{
+        scrollTo(d3.select('.separator__negative-high').node())
+    })
+
+    d3.select('.button-neutral').on('click',()=>{
+        scrollTo(d3.select('.separator__neutral').node())
+    })
+}
 
 function generateEmoji(){
     var emojis = [
@@ -171,6 +224,7 @@ function handleInputChange(){
     if(val==''){
         $noun.style('font-size','14px')
         $verb.classed('hidden',false)
+        $separators.classed('hidden', false)
         handleMouseLeave();
     }
     else{
@@ -178,6 +232,12 @@ function handleInputChange(){
             if (d.noun.includes(val)){return '48px'}
             else return '14px'
         })
+        .classed('faded',d=>{
+            if (d.noun.includes(val)){return false}
+            else return true
+        })
+
+        $separators.classed('hidden', true)
     
         $verb.classed('hidden',d=>{           
             handleMouseLeave(); 
@@ -196,48 +256,29 @@ function handleInputChange(){
 function scrollTo(element) {
 	jump(element, {
 		duration: 1000,
-		offset: -100
+		offset: -fixedSearchHeight
 	})
 }
 
 function handleDropDown(){    
-    const athing = d3.select(this);
-    const valThis = athing.text();        
-    const scrollTarget = d3.select(`.verb-container-${valThis}`).node()
+    const verbEl = d3.select(this);
+    const verbValue = verbEl.text();        
+    const scrollTarget = d3.select(`.verb-container-${verbValue}`).node()
     scrollTo(scrollTarget)
 }
 
 function addArticles(data){
-
     $nounSearch = d3.select('.search-noun__input')
     $nounSearch.on('keyup', handleInputChange)
 
-    console.log(data)
+    console.log(data.length)
     $content = d3.select('.content');
-
+    
 
     //verbs (top-level)
-    verbJoin = $content.selectAll('div')
+    verbJoin = $content.selectAll('div.verb-container')
     .data(data)
     .enter()
-
-
-    // trash code select start
-
-
-    // $verbSelect = d3.select('.search-verb__input')
-    // .selectAll('option')
-    // .data(data)
-    // .enter()
-    // .append('option')
-    // .text(d=>d.verb)
-    // .attr('value',d=>d.verb)
-
-
-
-    // d3.select('.search-verb__input').on('change',handleDropDown)
-
-    //trash code select end
     
     $verb = verbJoin
     .append('div')
@@ -277,7 +318,7 @@ function addArticles(data){
 
     // nouns (bottom-level)
     nounJoin = $verb
-    .selectAll('span')
+    .selectAll('span.noun')
     .data(d=>d.nouns)
     .enter()
 
@@ -301,6 +342,20 @@ function addArticles(data){
 
     d3.select(verbDropDown).on('change',handleDropDown)
 
+    setSentimentScroll()
+    $separators = d3.selectAll('.separator')
+
+    // Adjusting content to fit below fixed search bar
+    fixedSearchHeight = d3.select('.fixed-search-bar').node().offsetHeight    
+
+    d3.select('.content').style('padding-top', `${fixedSearchHeight}px`)
+
+    // d3.select('.verb-container-favor')
+    // .insert('div', '#foo')
+    // .insert('div',":first-child")
+    // .insert('div', '.verb-container-love + *')
+    // .attr('id', 'foo');
+
 
 
     // .on('mouseenter', (d,i,n)=>handleMouseOver(n[i],d))
@@ -311,10 +366,11 @@ function addArticles(data){
 }
 
 function cleanData(data){
-    const verbsToKeep = data[0].map(item=>item.verb);
+    const verbsToKeep = data[0]
+    const verbsToKeepList = verbsToKeep.map(item=>item.verb);
     const allVerbs = data[1];
-    const filteredVerbs = allVerbs.filter(verb=>verbsToKeep.includes(verb.verb))
-
+    const filteredVerbs = allVerbs.filter(verb=>verbsToKeepList.includes(verb.verb))
+    
     formattedVerbs = filteredVerbs.map(verb=>({
         ...verb,
         nounList: verb.nouns.map(item=>item.noun),
@@ -323,7 +379,16 @@ function cleanData(data){
             nounLevelVerb: verb.verb
         }))
     }))
-    
+
+    formattedVerbs.forEach(function(verb) {
+        const result = data[0].filter(function(item) {
+            return item.verb === verb.verb;
+        });            
+        verb.sentiment = (result[0] !== undefined) ? +result[0].sentiment_5 : null;
+    });
+
+    formattedVerbs = formattedVerbs.sort((a, b) =>  parseFloat(b.sentiment) - parseFloat(a.sentiment))
+    console.log(formattedVerbs)
     return formattedVerbs;
 }
 

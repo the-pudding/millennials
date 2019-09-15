@@ -715,6 +715,7 @@ var articlesJoin;
 var $verb;
 var $noun;
 var $articles;
+var $separators;
 var $progressBar;
 var backgroundBarWidthPx;
 var barWidthPx;
@@ -724,12 +725,13 @@ var currentArticle = 0;
 var $nounSearch;
 var $verbSelect;
 var formattedVerbs;
+var fixedSearchHeight;
 
 function updateProgressBar(el) {
   var $foregroundBar = d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-foreground');
   $foregroundBar.style('width', '0px');
-  backgroundBarWidthPx = +d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-background').style('width').replace('px', '');
-  console.log(backgroundBarWidthPx);
+  backgroundBarWidthPx = +d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-background').style('width').replace('px', ''); // console.log(backgroundBarWidthPx)
+
   var step = backgroundBarWidthPx / 100;
   var barPercentage;
   barUpdater = setInterval(updateFunction, 50);
@@ -795,15 +797,57 @@ function handleMouseLeave() {
   clearInterval(barUpdater);
   d3.selectAll('.tooltip__progress-bar-foreground').style('width', '0px');
   d3.selectAll('.tooltip').classed('hidden', true);
+  $noun.classed('faded', false);
 }
 
-function resize() {} // function checkNoun(noun){
-//     if (noun.hasOwnProperty('noun')){
-//         return true;
-//     }
-//     return false;
-// }
+function resize() {}
 
+function setSentimentScroll() {
+  var parentDiv = d3.select('div.content').node();
+  var posHighFirstEl = d3.select('.verb-container-love').node();
+  var sepPositiveHigh = document.createElement('div');
+  sepPositiveHigh.className = 'separator separator__positive-high';
+  sepPositiveHigh.innerHTML = '😁 highly positive sentiments';
+  var posLowFirstEl = d3.select('.verb-container-favor').node();
+  var sepPositiveLow = document.createElement('div');
+  sepPositiveLow.className = 'separator separator__positive-low';
+  sepPositiveLow.innerHTML = '🙂 positive sentiments';
+  var neutralFirstEl = d3.select('.verb-container-say').node();
+  var sepNeutral = document.createElement('div');
+  sepNeutral.className = 'separator separator__neutral';
+  sepNeutral.innerHTML = '😐 neutral sentiments';
+  var negLowFirstEl = d3.select('.verb-container-leave').node();
+  var sepNegativeLow = document.createElement('div');
+  sepNegativeLow.className = 'separator separator__negative-low';
+  sepNegativeLow.innerHTML = '🙁 negative sentiments';
+  var negHighFirstEl = d3.select('.verb-container-hate').node();
+  var sepNegativeHigh = document.createElement('div');
+  sepNegativeHigh.className = 'separator separator__negative-high';
+  sepNegativeHigh.innerHTML = '😱 highly negative sentiments';
+  parentDiv.insertBefore(sepPositiveHigh, posHighFirstEl);
+  parentDiv.insertBefore(sepPositiveLow, posLowFirstEl);
+  parentDiv.insertBefore(sepNeutral, neutralFirstEl);
+  parentDiv.insertBefore(sepNegativeLow, negLowFirstEl);
+  parentDiv.insertBefore(sepNegativeHigh, negHighFirstEl); // const verbEl = d3.select(this);
+  // const verbValue = verbEl.text();        
+  // const scrollTarget = d3.select(`.verb-container-${verbValue}`).node()
+
+  d3.select('.button-positive-high').on('click', function () {
+    scrollTo(d3.select('.separator__positive-high').node());
+  });
+  d3.select('.button-positive-low').on('click', function () {
+    scrollTo(d3.select('.separator__positive-low').node());
+  });
+  d3.select('.button-negative-low').on('click', function () {
+    scrollTo(d3.select('.separator__negative-low').node());
+  });
+  d3.select('.button-negative-high').on('click', function () {
+    scrollTo(d3.select('.separator__negative-high').node());
+  });
+  d3.select('.button-neutral').on('click', function () {
+    scrollTo(d3.select('.separator__neutral').node());
+  });
+}
 
 function generateEmoji() {
   var emojis = ['😄', '😃', '😀', '😊', '☺', '😉', '😍', '😘', '😚', '😗', '😙', '😜', '😝', '😛', '😳', '😁', '😔', '😌', '😒', '😞', '😣', '😢', '😂', '😭', '😪', '😥', '😰', '😅', '😓', '😩', '😫', '😨', '😱', '😠', '😡', '😤', '😖', '😆', '😋', '😷', '😎', '😴', '😵', '😲', '😟', '😦', '😧', '😈', '👿', '😮', '😬', '😐', '😕', '😯', '😶', '😇', '😏', '😑', '👲', '👳', '👮', '👷', '💂', '👶', '👦', '👧', '👨', '👩', '👴', '👵', '👱', '👼', '👸', '😺', '😸', '😻', '😽', '😼', '🙀', '😿', '😹', '😾', '👹', '👺', '🙈', '🙉', '🙊', '💀', '👽', '💩', '🔥', '✨', '🌟', '💫', '💥', '💢', '💦', '💧', '💤', '💨', '👂', '👀', '👃', '👅', '👄', '👍', '👎', '👌', '👊', '✊', '✌', '👋', '✋', '👐', '👆', '👇', '👉', '👈', '🙌', '🙏', '☝', '👏', '💪', '🚶', '🏃', '💃', '👫', '👪', '👬', '👭', '💏', '💑', '👯', '🙆', '🙅', '💁', '🙋', '💆', '💇', '💅', '👰', '🙎', '🙍', '🙇', '🎩', '👑', '👒', '👟', '👞', '👡', '👠', '👢', '👕', '👔', '👚', '👗', '🎽', '👖', '👘', '👙', '💼', '👜', '👝', '👛', '👓', '🎀', '🌂', '💄', '💛', '💙', '💜', '💚', '❤', '💔', '💗', '💓', '💕', '💖', '💞', '💘', '💌', '💋', '💍', '💎', '👤', '👥', '💬', '👣', '💭', '🐶', '🐺', '🐱', '🐭', '🐹', '🐰', '🐸', '🐯', '🐨', '🐻', '🐷', '🐽', '🐮', '🐗', '🐵', '🐒', '🐴', '🐑', '🐘', '🐼', '🐧', '🐦', '🐤', '🐥', '🐣', '🐔', '🐍', '🐢', '🐛', '🐝', '🐜', '🐞', '🐌', '🐙', '🐚', '🐠', '🐟', '🐬', '🐳', '🐋', '🐄', '🐏', '🐀', '🐃', '🐅', '🐇', '🐉', '🐎', '🐐', '🐓', '🐕', '🐖', '🐁', '🐂', '🐲', '🐡', '🐊', '🐫', '🐪', '🐆', '🐈', '🐩', '🐾', '💐', '🌸', '🌷', '🍀', '🌹', '🌻', '🌺', '🍁', '🍃', '🍂', '🌿', '🌾', '🍄', '🌵', '🌴', '🌲', '🌳', '🌰', '🌱', '🌼', '🌐', '🌞', '🌝', '🌚', '🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘', '🌜', '🌛', '🌙', '🌍', '🌎', '🌏', '🌋', '🌌', '🌠', '⭐', '☀', '⛅', '☁', '⚡', '☔', '❄', '⛄', '🌀', '🌁', '🌈', '🌊', '🎍', '💝', '🎎', '🎒', '🎓', '🎏', '🎆', '🎇', '🎐', '🎑', '🎃', '👻', '🎅', '🎄', '🎁', '🎋', '🎉', '🎊', '🎈', '🎌', '🔮', '🎥', '📷', '📹', '📼', '💿', '📀', '💽', '💾', '💻', '📱', '☎', '📞', '📟', '📠', '📡', '📺', '📻', '🔊', '🔉', '🔈', '🔇', '🔔', '🔕', '📢', '📣', '⏳', '⌛', '⏰', '⌚', '🔓', '🔒', '🔏', '🔐', '🔑', '🔎', '💡', '🔦', '🔆', '🔅', '🔌', '🔋', '🔍', '🛁', '🛀', '🚿', '🚽', '🔧', '🔩', '🔨', '🚪', '🚬', '💣', '🔫', '🔪', '💊', '💉', '💰', '💴', '💵', '💷', '💶', '💳', '💸', '📲', '📧', '📥', '📤', '✉', '📩', '📨', '📯', '📫', '📪', '📬', '📭', '📮', '📦', '📝', '📄', '📃', '📑', '📊', '📈', '📉', '📜', '📋', '📅', '📆', '📇', '📁', '📂', '✂', '📌', '📎', '✒', '✏', '📏', '📐', '📕', '📗', '📘', '📙', '📓', '📔', '📒', '📚', '📖', '🔖', '📛', '🔬', '🔭', '📰', '🎨', '🎬', '🎤', '🎧', '🎼', '🎵', '🎶', '🎹', '🎻', '🎺', '🎷', '🎸', '👾', '🎮', '🃏', '🎴', '🀄', '🎲', '🎯', '🏈', '🏀', '⚽', '⚾', '🎾', '🎱', '🏉', '🎳', '⛳', '🚵', '🚴', '🏁', '🏇', '🏆', '🎿', '🏂', '🏊', '🏄', '🎣', '☕', '🍵', '🍶', '🍼', '🍺', '🍻', '🍸', '🍹', '🍷', '🍴', '🍕', '🍔', '🍟', '🍗', '🍖', '🍝', '🍛', '🍤', '🍱', '🍣', '🍥', '🍙', '🍘', '🍚', '🍜', '🍲', '🍢', '🍡', '🍳', '🍞', '🍩', '🍮', '🍦', '🍨', '🍧', '🎂', '🍰', '🍪', '🍫', '🍬', '🍭', '🍯', '🍎', '🍏', '🍊', '🍋', '🍒', '🍇', '🍉', '🍓', '🍑', '🍈', '🍌', '🍐', '🍍', '🍠', '🍆', '🍅', '🌽', '🏠', '🏡', '🏫', '🏢', '🏣', '🏥', '🏦', '🏪', '🏩', '🏨', '💒', '⛪', '🏬', '🏤', '🌇', '🌆', '🏯', '🏰', '⛺', '🏭', '🗼', '🗾', '🗻', '🌄', '🌅', '🌃', '🗽', '🌉', '🎠', '🎡', '⛲', '🎢', '🚢', '⛵', '🚤', '🚣', '⚓', '🚀', '✈', '💺', '🚁', '🚂', '🚊', '🚉', '🚞', '🚆', '🚄', '🚅', '🚈', '🚇', '🚝', '🚋', '🚃', '🚎', '🚌', '🚍', '🚙', '🚘', '🚗', '🚕', '🚖', '🚛', '🚚', '🚨', '🚓', '🚔', '🚒', '🚑', '🚐', '🚲', '🚡', '🚟', '🚠', '🚜', '💈', '🚏', '🎫', '🚦', '🚥', '⚠', '🚧', '🔰', '⛽', '🏮', '🎰', '♨', '🗿', '🎪', '🎭', '📍', '🚩', '⬆', '⬇', '⬅', '➡', '🔠', '🔡', '🔤', '↗', '↖', '↘', '↙', '↔', '↕', '🔄', '◀', '▶', '🔼', '🔽', '↩', '↪', 'ℹ', '⏪', '⏩', '⏫', '⏬', '⤵', '⤴', '🆗', '🔀', '🔁', '🔂', '🆕', '🆙', '🆒', '🆓', '🆖', '📶', '🎦', '🈁', '🈯', '🈳', '🈵', '🈴', '🈲', '🉐', '🈹', '🈺', '🈶', '🈚', '🚻', '🚹', '🚺', '🚼', '🚾', '🚰', '🚮', '🅿', '♿', '🚭', '🈷', '🈸', '🈂', 'Ⓜ', '🛂', '🛄', '🛅', '🛃', '🉑', '㊙', '㊗', '🆑', '🆘', '🆔', '🚫', '🔞', '📵', '🚯', '🚱', '🚳', '🚷', '🚸', '⛔', '✳', '❇', '❎', '✅', '✴', '💟', '🆚', '📳', '📴', '🅰', '🅱', '🆎', '🅾', '💠', '➿', '♻', '♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓', '⛎', '🔯', '🏧', '💹', '💲', '💱', '©', '®', '™', '〽', '〰', '🔝', '🔚', '🔙', '🔛', '🔜', '❌', '⭕', '❗', '❓', '❕', '❔', '🔃', '🕛', '🕧', '🕐', '🕜', '🕑', '🕝', '🕒', '🕞', '🕓', '🕟', '🕔', '🕠', '🕕', '🕖', '🕗', '🕘', '🕙', '🕚', '🕡', '🕢', '🕣', '🕤', '🕥', '🕦', '✖', '➕', '➖', '➗', '♠', '♥', '♣', '♦', '💮', '💯', '✔', '☑', '🔘', '🔗', '➰', '🔱', '🔲', '🔳', '◼', '◻', '◾', '◽', '▪', '▫', '🔺', '⬜', '⬛', '⚫', '⚪', '🔴', '🔵', '🔻', '🔶', '🔷', '🔸', '🔹'];
@@ -827,13 +871,19 @@ function handleInputChange() {
   if (val == '') {
     $noun.style('font-size', '14px');
     $verb.classed('hidden', false);
+    $separators.classed('hidden', false);
     handleMouseLeave();
   } else {
     $noun.style('font-size', function (d) {
       if (d.noun.includes(val)) {
         return '48px';
       } else return '14px';
+    }).classed('faded', function (d) {
+      if (d.noun.includes(val)) {
+        return false;
+      } else return true;
     });
+    $separators.classed('hidden', true);
     $verb.classed('hidden', function (d) {
       handleMouseLeave();
       var nounMatch = d.nounList.filter(function (item) {
@@ -853,34 +903,24 @@ function handleInputChange() {
 function scrollTo(element) {
   (0, _jump.default)(element, {
     duration: 1000,
-    offset: -100
+    offset: -fixedSearchHeight
   });
 }
 
 function handleDropDown() {
-  var athing = d3.select(this);
-  var valThis = athing.text();
-  var scrollTarget = d3.select(".verb-container-".concat(valThis)).node();
+  var verbEl = d3.select(this);
+  var verbValue = verbEl.text();
+  var scrollTarget = d3.select(".verb-container-".concat(verbValue)).node();
   scrollTo(scrollTarget);
 }
 
 function addArticles(data) {
   $nounSearch = d3.select('.search-noun__input');
   $nounSearch.on('keyup', handleInputChange);
-  console.log(data);
+  console.log(data.length);
   $content = d3.select('.content'); //verbs (top-level)
 
-  verbJoin = $content.selectAll('div').data(data).enter(); // trash code select start
-  // $verbSelect = d3.select('.search-verb__input')
-  // .selectAll('option')
-  // .data(data)
-  // .enter()
-  // .append('option')
-  // .text(d=>d.verb)
-  // .attr('value',d=>d.verb)
-  // d3.select('.search-verb__input').on('change',handleDropDown)
-  //trash code select end
-
+  verbJoin = $content.selectAll('div.verb-container').data(data).enter();
   $verb = verbJoin.append('div').attr('class', function (d) {
     return "verb-container verb-container-".concat(d.verb);
   });
@@ -899,7 +939,7 @@ function addArticles(data) {
   $tooltip.append('p').attr('class', 'tooltip__hed');
   $tooltip.append('p').attr('class', 'tooltip__other-verbs'); // nouns (bottom-level)
 
-  nounJoin = $verb.selectAll('span').data(function (d) {
+  nounJoin = $verb.selectAll('span.noun').data(function (d) {
     return d.nouns;
   }).enter();
   $noun = nounJoin.append('div').attr('class', 'noun').text(function (d) {
@@ -916,19 +956,30 @@ function addArticles(data) {
       };
     })
   });
-  d3.select(verbDropDown).on('change', handleDropDown); // .on('mouseenter', (d,i,n)=>handleMouseOver(n[i],d))
+  d3.select(verbDropDown).on('change', handleDropDown);
+  setSentimentScroll();
+  $separators = d3.selectAll('.separator'); // Adjusting content to fit below fixed search bar
+
+  fixedSearchHeight = d3.select('.fixed-search-bar').node().offsetHeight;
+  d3.select('.content').style('padding-top', "".concat(fixedSearchHeight, "px")); // d3.select('.verb-container-favor')
+  // .insert('div', '#foo')
+  // .insert('div',":first-child")
+  // .insert('div', '.verb-container-love + *')
+  // .attr('id', 'foo');
+  // .on('mouseenter', (d,i,n)=>handleMouseOver(n[i],d))
   // d3.select('body').on('mousemove',handleThing)
   // window.on('mousemove',handleThing)
   // d3.select(window).on('mousemove',handleThing)
 }
 
 function cleanData(data) {
-  var verbsToKeep = data[0].map(function (item) {
+  var verbsToKeep = data[0];
+  var verbsToKeepList = verbsToKeep.map(function (item) {
     return item.verb;
   });
   var allVerbs = data[1];
   var filteredVerbs = allVerbs.filter(function (verb) {
-    return verbsToKeep.includes(verb.verb);
+    return verbsToKeepList.includes(verb.verb);
   });
   formattedVerbs = filteredVerbs.map(function (verb) {
     return _objectSpread({}, verb, {
@@ -942,6 +993,16 @@ function cleanData(data) {
       })
     });
   });
+  formattedVerbs.forEach(function (verb) {
+    var result = data[0].filter(function (item) {
+      return item.verb === verb.verb;
+    });
+    verb.sentiment = result[0] !== undefined ? +result[0].sentiment_5 : null;
+  });
+  formattedVerbs = formattedVerbs.sort(function (a, b) {
+    return parseFloat(b.sentiment) - parseFloat(a.sentiment);
+  });
+  console.log(formattedVerbs);
   return formattedVerbs;
 }
 
