@@ -127,7 +127,7 @@ function handleMouseLeave(){
     .classed('hidden', true)    
 
     
-    $noun.classed('faded',false)
+    // $noun.classed('faded',false)
 }
 
 
@@ -225,6 +225,7 @@ function handleInputChange(){
         $noun.style('font-size','14px')
         $verb.classed('hidden',false)
         $separators.classed('hidden', false)
+        $noun.classed('faded',false)
         handleMouseLeave();
     }
     else{

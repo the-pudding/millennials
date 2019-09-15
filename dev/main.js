@@ -796,8 +796,7 @@ function handleMouseLeave() {
   articleNumber = 0;
   clearInterval(barUpdater);
   d3.selectAll('.tooltip__progress-bar-foreground').style('width', '0px');
-  d3.selectAll('.tooltip').classed('hidden', true);
-  $noun.classed('faded', false);
+  d3.selectAll('.tooltip').classed('hidden', true); // $noun.classed('faded',false)
 }
 
 function resize() {}
@@ -872,6 +871,7 @@ function handleInputChange() {
     $noun.style('font-size', '14px');
     $verb.classed('hidden', false);
     $separators.classed('hidden', false);
+    $noun.classed('faded', false);
     handleMouseLeave();
   } else {
     $noun.style('font-size', function (d) {
