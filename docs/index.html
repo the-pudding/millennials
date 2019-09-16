@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang='en' data-version='1568154960126'>
+<html lang='en' data-version='1568671078786'>
 
 <head>
 
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
 	<link inline rel='stylesheet' href='bundle.css' />
     <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 	<style>
@@ -217,16 +218,54 @@
 
 	<main id='content'>
 
-		
-		<section class='main-page'>    
+		<section class='intro'>
+		    <div class='intro__sidebar'>
+		        <div class='mark'><a href='https://www.pudding.cool'><img src='assets/images/P_logo.svg'></a></div>
+		        <div class='info'><img src='assets/images/info.svg'></div>
+		    </div>
+		    <div class='intro-text'>
+		        <p class='intro-hed'>Millennials kill everything</p>
+		        <p class='intro-body'>Ok, not really... but as millennials, we’ve seen countless headlines about what we’ve supposedly offed. 
+		We’ve killed doorbells 🔔, bar soap, and Applebee’s 🍎 (although we might be proud of that last one). 
+		We looked at 40,000 headlines from 2005-2015, and it turns out only XX of them or X% were about what we kill.
+		Let’s explore how the media covers millennials. </p>
+		        <div class='enter-arrow__container'>
+		            <svg class='enter-arrow' width="24" height="24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+		        </div>
+		        
+		    </div>
+		    <div class='byline-container'>
+		            <p class='byline'>DATA AND STORY BY ALLIE SAIZAN</p>
+		            <p class='byline'> DESIGN + DEVELOPMENT ILIA BLINDERMAN AND JAN DIEHM</p>
+		        </div>
+		</section>
+		<section class='main-page hidden'>    
 		    <div class='main-page__sidebar'>
-		        <div class='button'><img src='assets/images/P_logo.svg'></div>
-		        <a href='' class='button button-positive'>👍</a>
-		        <a href='' class='button button-neutral'>🤷</a>
-		        <a href='' class='button button-negative'>👎</a>
+		        <div class='mark'><a href='https://www.pudding.cool'><img src='assets/images/P_logo.svg'></a></div>
+		        <div class='button-container'>
+		            <div class='button button-positive-high'>😁</div>
+		            <div class='button button-positive-low'>🙂</div>
+		            <div class='button button-neutral'>😐</div>
+		            <div class='button button-negative-low'>🙁</div>
+		            <div class='button button-negative-high'>😱</div>
+		        </div>
+		        <div class='info'><img src='assets/images/info.svg'></div>
 		    </div>
 		    <div class='main-page__content mono'>
-		        <nav class='nav-bar'><img src='assets/images/tmp_nav.png'></nav>
+		        <div class='fixed-search-bar'>
+		            <div class='nav-container'>
+		                <div class='nav-label'>Millennials  </div>
+		                <nav class='nav-bar'>
+		                    
+		                    <div class='search-verb'>
+		                        <select class='search-verb__input' id='search-verb__input'></select>
+		                    </div>
+		                    <form class='search-noun'>
+		                        <input class='search-noun__input' type="text" name="search" placeholder="search by noun">
+		                    </form>
+		                </nav>
+		            </div>
+		        </div>
 		        <div class='content'>
 		            <div class='tooltip hidden'></div>
 		        </div>        
@@ -241,7 +280,8 @@
 
     
 	<script src='assets/scripts/d3.v5.10.0.min.js'></script>
-	<script src='main.js?version=1568154960126' async></script>
+	<script src='main.js?version=1568671078786' async></script>
+    <script src="assets/scripts/choices.min.js"></script>
 </body>
 
 </html>

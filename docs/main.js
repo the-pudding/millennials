@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"or4r":[function(require,module,exports) {
+})({"../../node_modules/lodash.debounce/index.js":[function(require,module,exports) {
 var global = arguments[3];
 /**
  * lodash (Custom Build) <https://lodash.com/>
@@ -497,7 +497,7 @@ function toNumber(value) {
 
 module.exports = debounce;
 
-},{}],"WEtf":[function(require,module,exports) {
+},{}],"utils/is-mobile.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -527,6 +527,171 @@ var isMobile = {
 };
 var _default = isMobile;
 exports.default = _default;
+},{}],"../../node_modules/jump.js/dist/jump.module.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+// Robert Penner's easeInOutQuad
+// find the rest of his easing functions here: http://robertpenner.com/easing/
+// find them exported for ES6 consumption here: https://github.com/jaxgeller/ez.js
+var easeInOutQuad = function easeInOutQuad(t, b, c, d) {
+  t /= d / 2;
+  if (t < 1) return c / 2 * t * t + b;
+  t--;
+  return -c / 2 * (t * (t - 2) - 1) + b;
+};
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+var jumper = function jumper() {
+  // private variable cache
+  // no variables are created during a jump, preventing memory leaks
+  var element = void 0; // element to scroll to                   (node)
+
+  var start = void 0; // where scroll starts                    (px)
+
+  var stop = void 0; // where scroll stops                     (px)
+
+  var offset = void 0; // adjustment from the stop position      (px)
+
+  var easing = void 0; // easing function                        (function)
+
+  var a11y = void 0; // accessibility support flag             (boolean)
+
+  var distance = void 0; // distance of scroll                     (px)
+
+  var duration = void 0; // scroll duration                        (ms)
+
+  var timeStart = void 0; // time scroll started                    (ms)
+
+  var timeElapsed = void 0; // time spent scrolling thus far          (ms)
+
+  var next = void 0; // next scroll position                   (px)
+
+  var callback = void 0; // to call when done scrolling            (function)
+  // scroll position helper
+
+  function location() {
+    return window.scrollY || window.pageYOffset;
+  } // element offset helper
+
+
+  function top(element) {
+    return element.getBoundingClientRect().top + start;
+  } // rAF loop helper
+
+
+  function loop(timeCurrent) {
+    // store time scroll started, if not started already
+    if (!timeStart) {
+      timeStart = timeCurrent;
+    } // determine time spent scrolling so far
+
+
+    timeElapsed = timeCurrent - timeStart; // calculate next scroll position
+
+    next = easing(timeElapsed, start, distance, duration); // scroll to it
+
+    window.scrollTo(0, next); // check progress
+
+    timeElapsed < duration ? window.requestAnimationFrame(loop) // continue scroll loop
+    : done(); // scrolling is done
+  } // scroll finished helper
+
+
+  function done() {
+    // account for rAF time rounding inaccuracies
+    window.scrollTo(0, start + distance); // if scrolling to an element, and accessibility is enabled
+
+    if (element && a11y) {
+      // add tabindex indicating programmatic focus
+      element.setAttribute('tabindex', '-1'); // focus the element
+
+      element.focus();
+    } // if it exists, fire the callback
+
+
+    if (typeof callback === 'function') {
+      callback();
+    } // reset time for next jump
+
+
+    timeStart = false;
+  } // API
+
+
+  function jump(target) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {}; // resolve options, or use defaults
+
+    duration = options.duration || 1000;
+    offset = options.offset || 0;
+    callback = options.callback; // "undefined" is a suitable default, and won't be called
+
+    easing = options.easing || easeInOutQuad;
+    a11y = options.a11y || false; // cache starting position
+
+    start = location(); // resolve target
+
+    switch (typeof target === 'undefined' ? 'undefined' : _typeof(target)) {
+      // scroll from current position
+      case 'number':
+        element = undefined; // no element to scroll to
+
+        a11y = false; // make sure accessibility is off
+
+        stop = start + target;
+        break;
+      // scroll to element (node)
+      // bounding rect is relative to the viewport
+
+      case 'object':
+        element = target;
+        stop = top(element);
+        break;
+      // scroll to element (selector)
+      // bounding rect is relative to the viewport
+
+      case 'string':
+        element = document.querySelector(target);
+        stop = top(element);
+        break;
+    } // resolve scroll distance, accounting for offset
+
+
+    distance = stop - start + offset; // resolve duration
+
+    switch (_typeof(options.duration)) {
+      // number in ms
+      case 'number':
+        duration = options.duration;
+        break;
+      // function passed the distance of the scroll
+
+      case 'function':
+        duration = options.duration(distance);
+        break;
+    } // start the loop
+
+
+    window.requestAnimationFrame(loop);
+  } // expose only the jump method
+
+
+  return jump;
+}; // export singleton
+
+
+var singleton = jumper();
+var _default = singleton;
+exports.default = _default;
 },{}],"graphic.js":[function(require,module,exports) {
 "use strict";
 
@@ -535,7 +700,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-/* global d3 */
+var _jump = _interopRequireDefault(require("jump.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var $content;
 var verbJoin;
 var nounJoin;
@@ -543,38 +715,142 @@ var articlesJoin;
 var $verb;
 var $noun;
 var $articles;
+var $separators;
+var $progressBar;
+var backgroundBarWidthPx;
+var barWidthPx;
+var barUpdater;
+var articleNumber;
+var currentArticle = 0;
+var $nounSearch;
+var $verbSelect;
+var formattedVerbs;
+var fixedSearchHeight;
 
-function handleMouseEnter(d) {
-  console.log(d);
-  var el = this;
-  var $sel = d3.select(el);
-  var $selVerb = d3.select(el.parentNode);
-  var $tooltip = $selVerb.select('.tooltip'); // show tooltip, load data
+function updateProgressBar(el) {
+  var $foregroundBar = d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-foreground');
+  $foregroundBar.style('width', '0px');
+  backgroundBarWidthPx = +d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-background').style('width').replace('px', ''); // console.log(backgroundBarWidthPx)
+
+  var step = backgroundBarWidthPx / 100;
+  var barPercentage;
+  barUpdater = setInterval(updateFunction, 50);
+
+  function updateFunction() {
+    barWidthPx = +$foregroundBar.style('width').replace('px', '');
+    barWidthPx += step;
+
+    if (barWidthPx === backgroundBarWidthPx) {
+      $foregroundBar.style('width', "".concat(barWidthPx, "px"));
+      clearInterval(barUpdater);
+    }
+
+    $foregroundBar.style('width', "".concat(barWidthPx, "px"));
+  }
+}
+
+function updateTooltip(d, el, $tooltip, currentArticle) {
+  "currentArticle: ".concat(currentArticle); // show tooltip, load data
 
   $tooltip.classed('hidden', false);
-  $tooltip.select('p.tooltip__meta').text("".concat(d.articles[0].url.split('//')[1].split('/')[0], " \u2022 ").concat(d.articles[0].pub_date));
-  $tooltip.select('p.tooltip__hed').text("".concat(d.articles[0].headline));
+  $tooltip.select('p.tooltip__meta').text("".concat(d.articles[currentArticle].url.split('//')[1].split('/')[0], " \u2022 ").concat(d.articles[currentArticle].pub_date));
+  $tooltip.select('p.tooltip__hed').text("".concat(d.articles[currentArticle].headline));
   $tooltip.select('p.tooltip__other-verbs').html(function () {
     var additionalArticles = d.articles.length > 1 ? "<span class='noun-selected'>".concat(generateEmoji(), " ").concat(d.noun, "</span> is also found in these verbs: <span class='additional-verbs'>").concat(d.other_verbs.join(', '), "</span>") : "";
     return additionalArticles;
   });
   var x = el.offsetLeft;
   var y = el.offsetTop;
-  console.log(y);
   $tooltip.style('left', "".concat(x, "px")).style('top', "-10px");
 }
 
-function handleMouseLeave() {
-  d3.selectAll('.tooltip').classed('hidden', true);
+function handleMouseEnter(d) {
+  console.log(d);
+  var el = this;
+  var $sel = d3.select(el);
+  var $selVerb = d3.select(el.parentNode);
+  var $tooltip = $selVerb.select('.tooltip');
+  articleNumber = d.articles.length;
+  updateTooltip(d, el, $tooltip, currentArticle);
+  updateProgressBar(el);
+
+  if (articleNumber > 1) {
+    var testUpdate = function testUpdate() {
+      if (currentArticle === articleNumber) {
+        clearInterval(testUpdater);
+      }
+
+      updateTooltip(d, el, $tooltip, currentArticle);
+      updateProgressBar(el);
+      currentArticle += 1;
+    };
+
+    currentArticle += 1;
+    var testUpdater = setInterval(testUpdate, 5000);
+    var testVar = 0;
+  }
 }
 
-function resize() {} // function checkNoun(noun){
-//     if (noun.hasOwnProperty('noun')){
-//         return true;
-//     }
-//     return false;
-// }
+function handleMouseLeave() {
+  currentArticle = 0;
+  articleNumber = 0;
+  clearInterval(barUpdater);
+  d3.selectAll('.tooltip__progress-bar-foreground').style('width', '0px');
+  d3.selectAll('.tooltip').classed('hidden', true); // $noun.classed('faded',false)
+}
 
+function resize() {
+  var height = window.innerHeight;
+  console.log(height);
+  d3.selectAll('#content').style('height', "".concat(height, "px"));
+}
+
+function setSentimentScroll() {
+  var parentDiv = d3.select('div.content').node();
+  var posHighFirstEl = d3.select('.verb-container-love').node();
+  var sepPositiveHigh = document.createElement('div');
+  sepPositiveHigh.className = 'separator separator__positive-high';
+  sepPositiveHigh.innerHTML = '😁 highly positive sentiments';
+  var posLowFirstEl = d3.select('.verb-container-favor').node();
+  var sepPositiveLow = document.createElement('div');
+  sepPositiveLow.className = 'separator separator__positive-low';
+  sepPositiveLow.innerHTML = '🙂 positive sentiments';
+  var neutralFirstEl = d3.select('.verb-container-say').node();
+  var sepNeutral = document.createElement('div');
+  sepNeutral.className = 'separator separator__neutral';
+  sepNeutral.innerHTML = '😐 neutral sentiments';
+  var negLowFirstEl = d3.select('.verb-container-leave').node();
+  var sepNegativeLow = document.createElement('div');
+  sepNegativeLow.className = 'separator separator__negative-low';
+  sepNegativeLow.innerHTML = '🙁 negative sentiments';
+  var negHighFirstEl = d3.select('.verb-container-hate').node();
+  var sepNegativeHigh = document.createElement('div');
+  sepNegativeHigh.className = 'separator separator__negative-high';
+  sepNegativeHigh.innerHTML = '😱 highly negative sentiments';
+  parentDiv.insertBefore(sepPositiveHigh, posHighFirstEl);
+  parentDiv.insertBefore(sepPositiveLow, posLowFirstEl);
+  parentDiv.insertBefore(sepNeutral, neutralFirstEl);
+  parentDiv.insertBefore(sepNegativeLow, negLowFirstEl);
+  parentDiv.insertBefore(sepNegativeHigh, negHighFirstEl); // const verbEl = d3.select(this);
+  // const verbValue = verbEl.text();        
+  // const scrollTarget = d3.select(`.verb-container-${verbValue}`).node()
+
+  d3.select('.button-positive-high').on('click', function () {
+    scrollTo(d3.select('.separator__positive-high').node());
+  });
+  d3.select('.button-positive-low').on('click', function () {
+    scrollTo(d3.select('.separator__positive-low').node());
+  });
+  d3.select('.button-negative-low').on('click', function () {
+    scrollTo(d3.select('.separator__negative-low').node());
+  });
+  d3.select('.button-negative-high').on('click', function () {
+    scrollTo(d3.select('.separator__negative-high').node());
+  });
+  d3.select('.button-neutral').on('click', function () {
+    scrollTo(d3.select('.separator__neutral').node());
+  });
+}
 
 function generateEmoji() {
   var emojis = ['😄', '😃', '😀', '😊', '☺', '😉', '😍', '😘', '😚', '😗', '😙', '😜', '😝', '😛', '😳', '😁', '😔', '😌', '😒', '😞', '😣', '😢', '😂', '😭', '😪', '😥', '😰', '😅', '😓', '😩', '😫', '😨', '😱', '😠', '😡', '😤', '😖', '😆', '😋', '😷', '😎', '😴', '😵', '😲', '😟', '😦', '😧', '😈', '👿', '😮', '😬', '😐', '😕', '😯', '😶', '😇', '😏', '😑', '👲', '👳', '👮', '👷', '💂', '👶', '👦', '👧', '👨', '👩', '👴', '👵', '👱', '👼', '👸', '😺', '😸', '😻', '😽', '😼', '🙀', '😿', '😹', '😾', '👹', '👺', '🙈', '🙉', '🙊', '💀', '👽', '💩', '🔥', '✨', '🌟', '💫', '💥', '💢', '💦', '💧', '💤', '💨', '👂', '👀', '👃', '👅', '👄', '👍', '👎', '👌', '👊', '✊', '✌', '👋', '✋', '👐', '👆', '👇', '👉', '👈', '🙌', '🙏', '☝', '👏', '💪', '🚶', '🏃', '💃', '👫', '👪', '👬', '👭', '💏', '💑', '👯', '🙆', '🙅', '💁', '🙋', '💆', '💇', '💅', '👰', '🙎', '🙍', '🙇', '🎩', '👑', '👒', '👟', '👞', '👡', '👠', '👢', '👕', '👔', '👚', '👗', '🎽', '👖', '👘', '👙', '💼', '👜', '👝', '👛', '👓', '🎀', '🌂', '💄', '💛', '💙', '💜', '💚', '❤', '💔', '💗', '💓', '💕', '💖', '💞', '💘', '💌', '💋', '💍', '💎', '👤', '👥', '💬', '👣', '💭', '🐶', '🐺', '🐱', '🐭', '🐹', '🐰', '🐸', '🐯', '🐨', '🐻', '🐷', '🐽', '🐮', '🐗', '🐵', '🐒', '🐴', '🐑', '🐘', '🐼', '🐧', '🐦', '🐤', '🐥', '🐣', '🐔', '🐍', '🐢', '🐛', '🐝', '🐜', '🐞', '🐌', '🐙', '🐚', '🐠', '🐟', '🐬', '🐳', '🐋', '🐄', '🐏', '🐀', '🐃', '🐅', '🐇', '🐉', '🐎', '🐐', '🐓', '🐕', '🐖', '🐁', '🐂', '🐲', '🐡', '🐊', '🐫', '🐪', '🐆', '🐈', '🐩', '🐾', '💐', '🌸', '🌷', '🍀', '🌹', '🌻', '🌺', '🍁', '🍃', '🍂', '🌿', '🌾', '🍄', '🌵', '🌴', '🌲', '🌳', '🌰', '🌱', '🌼', '🌐', '🌞', '🌝', '🌚', '🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘', '🌜', '🌛', '🌙', '🌍', '🌎', '🌏', '🌋', '🌌', '🌠', '⭐', '☀', '⛅', '☁', '⚡', '☔', '❄', '⛄', '🌀', '🌁', '🌈', '🌊', '🎍', '💝', '🎎', '🎒', '🎓', '🎏', '🎆', '🎇', '🎐', '🎑', '🎃', '👻', '🎅', '🎄', '🎁', '🎋', '🎉', '🎊', '🎈', '🎌', '🔮', '🎥', '📷', '📹', '📼', '💿', '📀', '💽', '💾', '💻', '📱', '☎', '📞', '📟', '📠', '📡', '📺', '📻', '🔊', '🔉', '🔈', '🔇', '🔔', '🔕', '📢', '📣', '⏳', '⌛', '⏰', '⌚', '🔓', '🔒', '🔏', '🔐', '🔑', '🔎', '💡', '🔦', '🔆', '🔅', '🔌', '🔋', '🔍', '🛁', '🛀', '🚿', '🚽', '🔧', '🔩', '🔨', '🚪', '🚬', '💣', '🔫', '🔪', '💊', '💉', '💰', '💴', '💵', '💷', '💶', '💳', '💸', '📲', '📧', '📥', '📤', '✉', '📩', '📨', '📯', '📫', '📪', '📬', '📭', '📮', '📦', '📝', '📄', '📃', '📑', '📊', '📈', '📉', '📜', '📋', '📅', '📆', '📇', '📁', '📂', '✂', '📌', '📎', '✒', '✏', '📏', '📐', '📕', '📗', '📘', '📙', '📓', '📔', '📒', '📚', '📖', '🔖', '📛', '🔬', '🔭', '📰', '🎨', '🎬', '🎤', '🎧', '🎼', '🎵', '🎶', '🎹', '🎻', '🎺', '🎷', '🎸', '👾', '🎮', '🃏', '🎴', '🀄', '🎲', '🎯', '🏈', '🏀', '⚽', '⚾', '🎾', '🎱', '🏉', '🎳', '⛳', '🚵', '🚴', '🏁', '🏇', '🏆', '🎿', '🏂', '🏊', '🏄', '🎣', '☕', '🍵', '🍶', '🍼', '🍺', '🍻', '🍸', '🍹', '🍷', '🍴', '🍕', '🍔', '🍟', '🍗', '🍖', '🍝', '🍛', '🍤', '🍱', '🍣', '🍥', '🍙', '🍘', '🍚', '🍜', '🍲', '🍢', '🍡', '🍳', '🍞', '🍩', '🍮', '🍦', '🍨', '🍧', '🎂', '🍰', '🍪', '🍫', '🍬', '🍭', '🍯', '🍎', '🍏', '🍊', '🍋', '🍒', '🍇', '🍉', '🍓', '🍑', '🍈', '🍌', '🍐', '🍍', '🍠', '🍆', '🍅', '🌽', '🏠', '🏡', '🏫', '🏢', '🏣', '🏥', '🏦', '🏪', '🏩', '🏨', '💒', '⛪', '🏬', '🏤', '🌇', '🌆', '🏯', '🏰', '⛺', '🏭', '🗼', '🗾', '🗻', '🌄', '🌅', '🌃', '🗽', '🌉', '🎠', '🎡', '⛲', '🎢', '🚢', '⛵', '🚤', '🚣', '⚓', '🚀', '✈', '💺', '🚁', '🚂', '🚊', '🚉', '🚞', '🚆', '🚄', '🚅', '🚈', '🚇', '🚝', '🚋', '🚃', '🚎', '🚌', '🚍', '🚙', '🚘', '🚗', '🚕', '🚖', '🚛', '🚚', '🚨', '🚓', '🚔', '🚒', '🚑', '🚐', '🚲', '🚡', '🚟', '🚠', '🚜', '💈', '🚏', '🎫', '🚦', '🚥', '⚠', '🚧', '🔰', '⛽', '🏮', '🎰', '♨', '🗿', '🎪', '🎭', '📍', '🚩', '⬆', '⬇', '⬅', '➡', '🔠', '🔡', '🔤', '↗', '↖', '↘', '↙', '↔', '↕', '🔄', '◀', '▶', '🔼', '🔽', '↩', '↪', 'ℹ', '⏪', '⏩', '⏫', '⏬', '⤵', '⤴', '🆗', '🔀', '🔁', '🔂', '🆕', '🆙', '🆒', '🆓', '🆖', '📶', '🎦', '🈁', '🈯', '🈳', '🈵', '🈴', '🈲', '🉐', '🈹', '🈺', '🈶', '🈚', '🚻', '🚹', '🚺', '🚼', '🚾', '🚰', '🚮', '🅿', '♿', '🚭', '🈷', '🈸', '🈂', 'Ⓜ', '🛂', '🛄', '🛅', '🛃', '🉑', '㊙', '㊗', '🆑', '🆘', '🆔', '🚫', '🔞', '📵', '🚯', '🚱', '🚳', '🚷', '🚸', '⛔', '✳', '❇', '❎', '✅', '✴', '💟', '🆚', '📳', '📴', '🅰', '🅱', '🆎', '🅾', '💠', '➿', '♻', '♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓', '⛎', '🔯', '🏧', '💹', '💲', '💱', '©', '®', '™', '〽', '〰', '🔝', '🔚', '🔙', '🔛', '🔜', '❌', '⭕', '❗', '❓', '❕', '❔', '🔃', '🕛', '🕧', '🕐', '🕜', '🕑', '🕝', '🕒', '🕞', '🕓', '🕟', '🕔', '🕠', '🕕', '🕖', '🕗', '🕘', '🕙', '🕚', '🕡', '🕢', '🕣', '🕤', '🕥', '🕦', '✖', '➕', '➖', '➗', '♠', '♥', '♣', '♦', '💮', '💯', '✔', '☑', '🔘', '🔗', '➰', '🔱', '🔲', '🔳', '◼', '◻', '◾', '◽', '▪', '▫', '🔺', '⬜', '⬛', '⚫', '⚪', '🔴', '🔵', '🔻', '🔶', '🔷', '🔸', '🔹'];
@@ -590,50 +866,156 @@ function handleMouseOver(el, noun) {
   // .style("top", (d3.event.pageY - 28) + "px");	
 }
 
+function handleInputChange() {
+  var $input = d3.select(this);
+  var val = this.value.toLowerCase();
+  handleMouseLeave();
+
+  if (val == '') {
+    $noun.style('font-size', '14px');
+    $verb.classed('hidden', false);
+    $separators.classed('hidden', false);
+    $noun.classed('faded', false);
+    handleMouseLeave();
+  } else {
+    $noun.style('font-size', function (d) {
+      if (d.noun.includes(val)) {
+        return '48px';
+      } else return '14px';
+    }).classed('faded', function (d) {
+      if (d.noun.includes(val)) {
+        return false;
+      } else return true;
+    });
+    $separators.classed('hidden', true);
+    $verb.classed('hidden', function (d) {
+      handleMouseLeave();
+      var nounMatch = d.nounList.filter(function (item) {
+        return item.includes(val);
+      });
+
+      if (nounMatch.length >= 1) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+  } // const start = $input.attr('data-start');
+
+}
+
+function scrollTo(element) {
+  (0, _jump.default)(element, {
+    duration: 1000,
+    offset: -fixedSearchHeight
+  });
+}
+
+function handleDropDown() {
+  var verbEl = d3.select(this);
+  var verbValue = verbEl.text();
+  var scrollTarget = d3.select(".verb-container-".concat(verbValue)).node();
+  scrollTo(scrollTarget);
+}
+
 function addArticles(data) {
-  console.log(data);
+  $nounSearch = d3.select('.search-noun__input');
+  $nounSearch.on('keyup', handleInputChange);
+  console.log(data.length);
   $content = d3.select('.content'); //verbs (top-level)
 
-  verbJoin = $content.selectAll('div').data(data).enter();
-  $verb = verbJoin.append('div').attr('class', 'verb-container');
+  verbJoin = $content.selectAll('div.verb-container').data(data).enter();
+  $verb = verbJoin.append('div').attr('class', function (d) {
+    return "verb-container verb-container-".concat(d.verb);
+  });
   $verb.append('div').attr('class', 'verb-name').attr('id', function (d) {
     return d.verb;
   }).text(function (d) {
     return d.verb;
-  }); //tooltip
+  }); //tooltip:
 
-  var $tooltip = $verb.append('div').attr('class', 'tooltip hidden'); // tooltip sections
+  var $tooltip = $verb.append('div').attr('class', 'tooltip hidden'); // tooltip: progress bar
+
+  $progressBar = $tooltip.append('div').attr('class', 'tooltip__progress-bar-background');
+  $progressBar.append('div').attr('class', 'tooltip__progress-bar-foreground'); // tooltip: text sections
 
   $tooltip.append('p').attr('class', 'tooltip__meta');
   $tooltip.append('p').attr('class', 'tooltip__hed');
   $tooltip.append('p').attr('class', 'tooltip__other-verbs'); // nouns (bottom-level)
 
-  nounJoin = $verb.selectAll('span').data(function (d) {
+  nounJoin = $verb.selectAll('span.noun').data(function (d) {
     return d.nouns;
   }).enter();
   $noun = nounJoin.append('div').attr('class', 'noun').text(function (d) {
     return " ".concat(d.noun, " ").concat(generateEmoji(), " \xB7 ");
   }).on('mouseenter', handleMouseEnter).on('mouseleave', handleMouseLeave).on('click', function (d) {
     return window.open(d.articles[0].url);
-  }); // .on('mouseenter', (d,i,n)=>handleMouseOver(n[i],d))
+  });
+  var verbDropDown = d3.select('.search-verb__input').node();
+  var verbDropDownChoices = new Choices(verbDropDown, {
+    choices: formattedVerbs.map(function (value) {
+      return {
+        value: value,
+        label: "".concat(value.verb)
+      };
+    })
+  });
+  d3.select(verbDropDown).on('change', handleDropDown);
+  setSentimentScroll();
+  $separators = d3.selectAll('.separator'); // Adjusting content to fit below fixed search bar
+
+  fixedSearchHeight = d3.select('.fixed-search-bar').node().offsetHeight;
+  d3.select('.content').style('padding-top', "".concat(fixedSearchHeight, "px"));
+  d3.select('.enter-arrow__container').on('click', function () {
+    d3.select('section.intro').classed('hidden', true);
+    d3.select('section.main-page').classed('hidden', false);
+  }); // d3.select('.verb-container-favor')
+  // .insert('div', '#foo')
+  // .insert('div',":first-child")
+  // .insert('div', '.verb-container-love + *')
+  // .attr('id', 'foo');
+  // .on('mouseenter', (d,i,n)=>handleMouseOver(n[i],d))
   // d3.select('body').on('mousemove',handleThing)
   // window.on('mousemove',handleThing)
   // d3.select(window).on('mousemove',handleThing)
 }
 
 function cleanData(data) {
-  var verbsToKeep = data[0].map(function (item) {
+  var verbsToKeep = data[0];
+  var verbsToKeepList = verbsToKeep.map(function (item) {
     return item.verb;
   });
-  console.log(verbsToKeep);
   var allVerbs = data[1];
   var filteredVerbs = allVerbs.filter(function (verb) {
-    return verbsToKeep.includes(verb.verb);
+    return verbsToKeepList.includes(verb.verb);
   });
-  return filteredVerbs;
+  formattedVerbs = filteredVerbs.map(function (verb) {
+    return _objectSpread({}, verb, {
+      nounList: verb.nouns.map(function (item) {
+        return item.noun;
+      }),
+      nouns: verb.nouns.map(function (noun) {
+        return _objectSpread({}, noun, {
+          nounLevelVerb: verb.verb
+        });
+      })
+    });
+  });
+  formattedVerbs.forEach(function (verb) {
+    var result = data[0].filter(function (item) {
+      return item.verb === verb.verb;
+    });
+    verb.sentiment = result[0] !== undefined ? +result[0].sentiment_5 : null;
+  });
+  formattedVerbs = formattedVerbs.sort(function (a, b) {
+    return parseFloat(b.sentiment) - parseFloat(a.sentiment);
+  });
+  console.log(formattedVerbs);
+  return formattedVerbs;
 }
 
 function init() {
+  resize();
   Promise.all([d3.csv("assets/data/verbs_to_include.csv"), d3.json("assets/data/articles_json_v2_small.json")]).then(function (data) {
     return cleanData(data);
   }).then(function (cleanedData) {
@@ -646,7 +1028,7 @@ var _default = {
   resize: resize
 };
 exports.default = _default;
-},{}],"v9Q8":[function(require,module,exports) {
+},{"jump.js":"../../node_modules/jump.js/dist/jump.module.js"}],"footer.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -745,7 +1127,7 @@ var _default = {
   init: init
 };
 exports.default = _default;
-},{}],"epB2":[function(require,module,exports) {
+},{}],"main.js":[function(require,module,exports) {
 "use strict";
 
 var _lodash = _interopRequireDefault(require("lodash.debounce"));
@@ -803,5 +1185,5 @@ function init() {
 }
 
 init();
-},{"lodash.debounce":"or4r","./utils/is-mobile":"WEtf","./graphic":"graphic.js","./footer":"v9Q8"}]},{},["epB2"], null)
+},{"lodash.debounce":"../../node_modules/lodash.debounce/index.js","./utils/is-mobile":"utils/is-mobile.js","./graphic":"graphic.js","./footer":"footer.js"}]},{},["main.js"], null)
 //# sourceMappingURL=/main.js.map
