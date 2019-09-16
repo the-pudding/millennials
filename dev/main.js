@@ -799,7 +799,11 @@ function handleMouseLeave() {
   d3.selectAll('.tooltip').classed('hidden', true); // $noun.classed('faded',false)
 }
 
-function resize() {}
+function resize() {
+  var height = window.innerHeight;
+  console.log(height);
+  d3.selectAll('#content').style('height', "".concat(height, "px"));
+}
 
 function setSentimentScroll() {
   var parentDiv = d3.select('div.content').node();
@@ -961,7 +965,11 @@ function addArticles(data) {
   $separators = d3.selectAll('.separator'); // Adjusting content to fit below fixed search bar
 
   fixedSearchHeight = d3.select('.fixed-search-bar').node().offsetHeight;
-  d3.select('.content').style('padding-top', "".concat(fixedSearchHeight, "px")); // d3.select('.verb-container-favor')
+  d3.select('.content').style('padding-top', "".concat(fixedSearchHeight, "px"));
+  d3.select('.enter-arrow__container').on('click', function () {
+    d3.select('section.intro').classed('hidden', true);
+    d3.select('section.main-page').classed('hidden', false);
+  }); // d3.select('.verb-container-favor')
   // .insert('div', '#foo')
   // .insert('div',":first-child")
   // .insert('div', '.verb-container-love + *')
@@ -1007,6 +1015,7 @@ function cleanData(data) {
 }
 
 function init() {
+  resize();
   Promise.all([d3.csv("assets/data/verbs_to_include.csv"), d3.json("assets/data/articles_json_v2_small.json")]).then(function (data) {
     return cleanData(data);
   }).then(function (cleanedData) {

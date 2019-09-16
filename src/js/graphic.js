@@ -131,7 +131,13 @@ function handleMouseLeave(){
 }
 
 
-function resize() {}
+function resize() {
+    const height = window.innerHeight
+    console.log(height)
+    d3.selectAll('#content')
+        .style('height', `${height}px`)
+	
+}
 
 function setSentimentScroll(){
     const parentDiv = d3.select('div.content').node()
@@ -351,6 +357,11 @@ function addArticles(data){
 
     d3.select('.content').style('padding-top', `${fixedSearchHeight}px`)
 
+    d3.select('.enter-arrow__container').on('click',()=>{
+        d3.select('section.intro').classed('hidden', true)
+        d3.select('section.main-page').classed('hidden', false)
+    })
+
     // d3.select('.verb-container-favor')
     // .insert('div', '#foo')
     // .insert('div',":first-child")
@@ -393,7 +404,8 @@ function cleanData(data){
     return formattedVerbs;
 }
 
-function init() {   
+function init() {
+    resize()   
     
 Promise.all([
     d3.csv("assets/data/verbs_to_include.csv"),

@@ -4,6 +4,7 @@
     background: linear-gradient(180deg, rgba(255, 90, 129, 0.98) 0%,rgba(175, 40, 150, 0.98) 100%)    
     display: flex;
     flex-direction: row;
+    height 100%
 
     &__sidebar        
         height 100%
@@ -18,6 +19,41 @@
         padding-top 1rem
         padding-bottom 1rem
         padding-left 1rem
+
+.enter-arrow
+    stroke: #fff;
+    width: 60%;
+    height: 60%;
+    transform: rotate(90deg) 
+
+    &__container
+        position: absolute;
+        left 50%
+        width: 4rem;
+        height: 4rem;
+        background-color: #000
+        border-radius: 50%;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        cursor pointer
+
+.byline-container
+    position absolute
+    bottom 1rem
+    left 5rem
+
+
+.byline    
+    margin 0
+    font-family: 'Share Tech Mono', monospace;
+    color white
 
 .intro-text 
     margin-left: 3rem        
