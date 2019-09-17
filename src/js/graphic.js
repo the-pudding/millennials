@@ -25,6 +25,7 @@ let $verbSelect;
 
 let formattedVerbs;
 let fixedSearchHeight;
+let separatorHeight;
 
 function updateProgressBar(el){
 
@@ -353,27 +354,35 @@ function addArticles(data){
     $separators = d3.selectAll('.separator')
 
     // Adjusting content to fit below fixed search bar
-    fixedSearchHeight = d3.select('.fixed-search-bar').node().offsetHeight    
+    fixedSearchHeight = d3.select('.fixed-search-bar').node().offsetHeight  
+    
 
     d3.select('.content').style('padding-top', `${fixedSearchHeight}px`)
 
     d3.select('.enter-arrow__container').on('click',()=>{
-        d3.select('section.intro').classed('hidden', true)
-        d3.select('section.main-page').classed('hidden', false)
+        d3.select('.intro').classed('hidden', true)
+        d3.select('.method').classed('hidden',true)
+        d3.select('.main-page').classed('hidden', false)
+        d3.selectAll('#content')
+        .style('height', '100%')
     })
 
-    // d3.select('.verb-container-favor')
-    // .insert('div', '#foo')
-    // .insert('div',":first-child")
-    // .insert('div', '.verb-container-love + *')
-    // .attr('id', 'foo');
+    d3.selectAll('div.info').on('click',()=>{
+        console.log('fire')
+        d3.select('.method').classed('hidden',false)
+        d3.select('.intro').classed('hidden', false)
+        d3.select('.intro-text').classed('hidden',true)
+        d3.select('.main-page').classed('hidden', true)
+        
+    })
 
+    d3.select('.method__close').on('click', ()=>{
+        d3.select('.main-page').classed('hidden', false)
+        d3.select('.intro').classed('hidden', true)
+        d3.select('.intro-text').classed('hidden',true)
+        d3.select('.method').classed('hidden',true)
+    })
 
-
-    // .on('mouseenter', (d,i,n)=>handleMouseOver(n[i],d))
-    // d3.select('body').on('mousemove',handleThing)
-    // window.on('mousemove',handleThing)
-    // d3.select(window).on('mousemove',handleThing)
 
 }
 

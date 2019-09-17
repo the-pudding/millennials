@@ -666,7 +666,7 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
 }
 .intro {
   margin: 0 auto;
-  padding: 6rem 1rem 3rem 1rem;
+  padding: 6rem 1rem 3rem 0rem;
 }
 .intro__hed {
   max-width: 60rem;
@@ -733,7 +733,7 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
 .byline-container {
   position: absolute;
   bottom: 1rem;
-  left: 5rem;
+  left: 4rem;
 }
 .byline {
   margin: 0;
@@ -747,11 +747,37 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
   font-size: 72px;
   color: #fff;
   font-family: 'Share Tech Mono', monospace;
+  padding-left: 0;
 }
 .intro-body {
   font-size: 36px;
   color: #fff;
   font-family: 'Share Tech Mono', monospace;
+  padding-left: 0;
+}
+.info {
+  cursor: pointer;
+}
+.method {
+  margin-left: 4rem;
+  font-family: 'Share Tech Mono', monospace;
+}
+.method__hed {
+  color: #fff;
+}
+.method__body {
+  color: #fff;
+  padding-bottom: 2rem;
+  border-bottom: 1px #fff solid;
+}
+.method__close {
+  background-color: #000;
+  color: #fff;
+  width: 5rem;
+  text-align: center;
+  margin: 0 auto;
+  font-weight: 800;
+  cursor: pointer;
 }
 .tooltip {
   position: absolute;

@@ -726,6 +726,7 @@ var $nounSearch;
 var $verbSelect;
 var formattedVerbs;
 var fixedSearchHeight;
+var separatorHeight;
 
 function updateProgressBar(el) {
   var $foregroundBar = d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-foreground');
@@ -967,17 +968,24 @@ function addArticles(data) {
   fixedSearchHeight = d3.select('.fixed-search-bar').node().offsetHeight;
   d3.select('.content').style('padding-top', "".concat(fixedSearchHeight, "px"));
   d3.select('.enter-arrow__container').on('click', function () {
-    d3.select('section.intro').classed('hidden', true);
-    d3.select('section.main-page').classed('hidden', false);
-  }); // d3.select('.verb-container-favor')
-  // .insert('div', '#foo')
-  // .insert('div',":first-child")
-  // .insert('div', '.verb-container-love + *')
-  // .attr('id', 'foo');
-  // .on('mouseenter', (d,i,n)=>handleMouseOver(n[i],d))
-  // d3.select('body').on('mousemove',handleThing)
-  // window.on('mousemove',handleThing)
-  // d3.select(window).on('mousemove',handleThing)
+    d3.select('.intro').classed('hidden', true);
+    d3.select('.method').classed('hidden', true);
+    d3.select('.main-page').classed('hidden', false);
+    d3.selectAll('#content').style('height', '100%');
+  });
+  d3.selectAll('div.info').on('click', function () {
+    console.log('fire');
+    d3.select('.method').classed('hidden', false);
+    d3.select('.intro').classed('hidden', false);
+    d3.select('.intro-text').classed('hidden', true);
+    d3.select('.main-page').classed('hidden', true);
+  });
+  d3.select('.method__close').on('click', function () {
+    d3.select('.main-page').classed('hidden', false);
+    d3.select('.intro').classed('hidden', true);
+    d3.select('.intro-text').classed('hidden', true);
+    d3.select('.method').classed('hidden', true);
+  });
 }
 
 function cleanData(data) {
