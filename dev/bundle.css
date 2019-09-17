@@ -812,6 +812,7 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
   width: 0%;
   height: 100%;
   background: linear-gradient(rgba(175,40,150,0.98) 0%, rgba(255,90,129,0.98) 100%);
+  max-width: 100%;
 }
 .watermark {
   padding-top: 1rem;
@@ -958,6 +959,7 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
   font-size: 36px;
   padding-top: 2rem;
   color: #fff;
+  margin-top: 10rem;
 }
 .faded {
   color: #808080;

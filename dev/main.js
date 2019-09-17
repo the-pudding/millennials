@@ -727,32 +727,31 @@ var $verbSelect;
 var formattedVerbs;
 var fixedSearchHeight;
 var separatorHeight;
+var articleInterval;
 
-function updateProgressBar(el) {
+function updateProgressBar(el, elapsed) {
   var $foregroundBar = d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-foreground');
-  $foregroundBar.style('width', '0px');
-  backgroundBarWidthPx = +d3.select(el.parentNode).select('.tooltip').select('.tooltip__progress-bar-background').style('width').replace('px', ''); // console.log(backgroundBarWidthPx)
-
-  var step = backgroundBarWidthPx / 100;
-  var barPercentage;
-  barUpdater = setInterval(updateFunction, 50);
-
-  function updateFunction() {
-    barWidthPx = +$foregroundBar.style('width').replace('px', '');
-    barWidthPx += step;
-
-    if (barWidthPx === backgroundBarWidthPx) {
-      $foregroundBar.style('width', "".concat(barWidthPx, "px"));
-      clearInterval(barUpdater);
-    }
-
-    $foregroundBar.style('width', "".concat(barWidthPx, "px"));
-  }
+  $foregroundBar.style('width', d3.format('%')(elapsed / 5000)); //   backgroundBarWidthPx = +d3
+  //     .select(el.parentNode)
+  //     .select('.tooltip')
+  //     .select('.tooltip__progress-bar-background')
+  //     .style('width')
+  //     .replace('px', '');
+  //   let barPercentage;
+  //   barUpdater = setInterval(updateFunction, 50);
+  //   function updateFunction() {
+  //     barWidthPx = +$foregroundBar.style('width').replace('px', '');
+  //     barWidthPx += step;
+  //     if (barWidthPx === backgroundBarWidthPx) {
+  //       $foregroundBar.style('width', `${barWidthPx}px`);
+  //       clearInterval(barUpdater);
+  //     }
+  //     $foregroundBar.style('width', `${barWidthPx}px`);
+  //   }
 }
 
-function updateTooltip(d, el, $tooltip, currentArticle) {
-  "currentArticle: ".concat(currentArticle); // show tooltip, load data
-
+function updateTooltip(d, el, $tooltip) {
+  // show tooltip, load data
   $tooltip.classed('hidden', false);
   $tooltip.select('p.tooltip__meta').text("".concat(d.articles[currentArticle].url.split('//')[1].split('/')[0], " \u2022 ").concat(d.articles[currentArticle].pub_date));
   $tooltip.select('p.tooltip__hed').text("".concat(d.articles[currentArticle].headline));
@@ -762,40 +761,45 @@ function updateTooltip(d, el, $tooltip, currentArticle) {
   });
   var x = el.offsetLeft;
   var y = el.offsetTop;
+  var toolTipHeight = $tooltip.node().offsetHeight; // console.log(d3.mouse(this))
+
   $tooltip.style('left', "".concat(x, "px")).style('top', "-10px");
+}
+
+function updateArticle(d, el, $tooltip) {
+  if (currentArticle >= articleNumber && articleInterval) {
+    clearInterval(articleInterval);
+    articleInterval = null;
+  } else {
+    var t = d3.timer(function (elapsed) {
+      updateProgressBar(el, elapsed);
+      if (elapsed > 5000) t.stop();
+    }, 10);
+    updateTooltip(d, el, $tooltip); // updateProgressBar(el);
+
+    currentArticle += 1;
+    articleInterval = setTimeout(function () {
+      updateArticle(d, el, $tooltip);
+    }, 5000);
+  }
 }
 
 function handleMouseEnter(d) {
   console.log(d);
+  currentArticle = 0;
   var el = this;
   var $sel = d3.select(el);
   var $selVerb = d3.select(el.parentNode);
   var $tooltip = $selVerb.select('.tooltip');
   articleNumber = d.articles.length;
-  updateTooltip(d, el, $tooltip, currentArticle);
-  updateProgressBar(el);
-
-  if (articleNumber > 1) {
-    var testUpdate = function testUpdate() {
-      if (currentArticle === articleNumber) {
-        clearInterval(testUpdater);
-      }
-
-      updateTooltip(d, el, $tooltip, currentArticle);
-      updateProgressBar(el);
-      currentArticle += 1;
-    };
-
-    currentArticle += 1;
-    var testUpdater = setInterval(testUpdate, 5000);
-    var testVar = 0;
-  }
+  updateArticle(d, el, $tooltip);
 }
 
 function handleMouseLeave() {
   currentArticle = 0;
   articleNumber = 0;
   clearInterval(barUpdater);
+  clearInterval(articleInterval);
   d3.selectAll('.tooltip__progress-bar-foreground').style('width', '0px');
   d3.selectAll('.tooltip').classed('hidden', true); // $noun.classed('faded',false)
 }
@@ -833,7 +837,7 @@ function setSentimentScroll() {
   parentDiv.insertBefore(sepNeutral, neutralFirstEl);
   parentDiv.insertBefore(sepNegativeLow, negLowFirstEl);
   parentDiv.insertBefore(sepNegativeHigh, negHighFirstEl); // const verbEl = d3.select(this);
-  // const verbValue = verbEl.text();        
+  // const verbValue = verbEl.text();
   // const scrollTarget = d3.select(`.verb-container-${verbValue}`).node()
 
   d3.select('.button-positive-high').on('click', function () {
@@ -863,8 +867,8 @@ function handleMouseOver(el, noun) {
   // let coordinates= d3.mouse(el);
   // d3.select('.tooltip')
   // .classed('hidden',false)
-  // .style("left", (d3.event.pageX) + "px")		
-  // .style("top", (d3.event.pageY - 28) + "px");	
+  // .style("left", (d3.event.pageX) + "px")
+  // .style("top", (d3.event.pageY - 28) + "px");
 }
 
 function handleInputChange() {
@@ -882,11 +886,15 @@ function handleInputChange() {
     $noun.style('font-size', function (d) {
       if (d.noun.includes(val)) {
         return '48px';
-      } else return '14px';
+      }
+
+      return '14px';
     }).classed('faded', function (d) {
       if (d.noun.includes(val)) {
         return false;
-      } else return true;
+      }
+
+      return true;
     });
     $separators.classed('hidden', true);
     $verb.classed('hidden', function (d) {
@@ -897,9 +905,9 @@ function handleInputChange() {
 
       if (nounMatch.length >= 1) {
         return false;
-      } else {
-        return true;
       }
+
+      return true;
     });
   } // const start = $input.attr('data-start');
 
@@ -923,7 +931,7 @@ function addArticles(data) {
   $nounSearch = d3.select('.search-noun__input');
   $nounSearch.on('keyup', handleInputChange);
   console.log(data.length);
-  $content = d3.select('.content'); //verbs (top-level)
+  $content = d3.select('.content'); // verbs (top-level)
 
   verbJoin = $content.selectAll('div.verb-container').data(data).enter();
   $verb = verbJoin.append('div').attr('class', function (d) {
@@ -933,7 +941,7 @@ function addArticles(data) {
     return d.verb;
   }).text(function (d) {
     return d.verb;
-  }); //tooltip:
+  }); // tooltip:
 
   var $tooltip = $verb.append('div').attr('class', 'tooltip hidden'); // tooltip: progress bar
 
@@ -1024,7 +1032,7 @@ function cleanData(data) {
 
 function init() {
   resize();
-  Promise.all([d3.csv("assets/data/verbs_to_include.csv"), d3.json("assets/data/articles_json_v2_small.json")]).then(function (data) {
+  Promise.all([d3.csv('assets/data/verbs_to_include.csv'), d3.json('assets/data/articles_json_v2_small.json')]).then(function (data) {
     return cleanData(data);
   }).then(function (cleanedData) {
     return addArticles(cleanedData);
