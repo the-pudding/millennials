@@ -37,17 +37,42 @@ let articleInterval;
 function enterViewSetup() {
     enterView({
         selector: '.verb-container',
-        enter: function (el) {
+        enter: el => {
             // el.classList.add('entered');
-            console.log('entered');
+
+            const thisVerb = d3
+                .select(el)
+                .select('div.verb-name')
+                .attr('id')
+
+            d3.select('.choices__item--selectable').text(thisVerb)
+
         },
-        exit: function (el) {
+        exit: el => {
             el.classList.remove('entered');
         },
-        progress: function (el, progress) {
+        progress: (el, progress) => {
             el.style.opacity = progress;
         },
         offset: 0.1, // enter at middle of viewport
+        once: false, // trigger just once
+    });
+
+    enterView({
+        selector: '.main-page__content',
+        enter: el => {
+            d3.select('.main-page__sidebar').classed('hidden', false);
+            d3.select('.fixed-search-bar').classed('hidden', false);
+        },
+        exit: el => {
+            //   el.classList.remove('entered');
+            d3.select('.main-page__sidebar').classed('hidden', true);
+            d3.select('.fixed-search-bar').classed('hidden', true);
+        },
+        progress: (el, progress) => {
+            // el.style.opacity = progress;
+        },
+        offset: 0.999, // enter at middle of viewport
         once: false, // trigger just once
     });
 }
@@ -145,8 +170,8 @@ function handleMouseLeave() {
 
 function resize() {
     const height = window.innerHeight;
-    console.log(height);
-    d3.selectAll('#content').style('height', `${height}px`);
+
+    d3.selectAll('section.intro').style('height', `${height}px`);
 }
 
 function setSentimentScroll() {
@@ -347,29 +372,29 @@ function addArticles(data) {
 
     // Adjusting content to fit below fixed search bar
 
-    d3.select('.content').style('padding-top', `${fixedSearchHeight}px`);
+    //   d3.select('.content').style('padding-top', `${fixedSearchHeight}px`);
 
-    d3.select('.enter-arrow__container').on('click', () => {
-        d3.select('.intro').classed('hidden', true);
-        d3.select('.method').classed('hidden', true);
-        d3.select('.main-page').classed('hidden', false);
-        d3.selectAll('#content').style('height', '100%');
-    });
+    //   d3.select('.enter-arrow__container').on('click', () => {
+    //     d3.select('.intro').classed('hidden', true);
+    //     d3.select('.method').classed('hidden', true);
+    //     d3.select('.main-page').classed('hidden', false);
+    //     d3.selectAll('#content').style('height', '100%');
+    //   });
 
-    d3.selectAll('div.info').on('click', () => {
-        console.log('fire');
-        d3.select('.method').classed('hidden', false);
-        d3.select('.intro').classed('hidden', false);
-        d3.select('.intro-text').classed('hidden', true);
-        d3.select('.main-page').classed('hidden', true);
-    });
+    //   d3.selectAll('div.info').on('click', () => {
+    //     console.log('fire');
+    //     d3.select('.method').classed('hidden', false);
+    //     d3.select('.intro').classed('hidden', false);
+    //     d3.select('.intro-text').classed('hidden', true);
+    //     d3.select('.main-page').classed('hidden', true);
+    //   });
 
-    d3.select('.method__close').on('click', () => {
-        d3.select('.main-page').classed('hidden', false);
-        d3.select('.intro').classed('hidden', true);
-        d3.select('.intro-text').classed('hidden', true);
-        d3.select('.method').classed('hidden', true);
-    });
+    //   d3.select('.method__close').on('click', () => {
+    //     d3.select('.main-page').classed('hidden', false);
+    //     d3.select('.intro').classed('hidden', true);
+    //     d3.select('.intro-text').classed('hidden', true);
+    //     d3.select('.method').classed('hidden', true);
+    //   });
 }
 
 function cleanData(data) {
