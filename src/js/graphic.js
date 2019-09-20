@@ -107,16 +107,33 @@ function enterViewSetup() {
       d3.select(`.button-${currentSentiment}`).style('font-size', '32px');
     },
     exit: el => {
-      const currentSentiment = el.classList[1].split('__')[1];
-      d3.selectAll('.button').style('font-size', '18px');
-      d3.select(`.button-${currentSentiment}`).style('font-size', '32px');
+      // const currentSentiment = el.classList[1].split('__')[1];
+      // d3.selectAll('.button').style('font-size', '18px');
+      // d3.select(`.button-${currentSentiment}`).style('font-size', '32px');
+
+      getPreviousSentiment(el);
     },
-    progress: (el, progress) => {
-      // el.style.opacity = progress;
-    },
-    offset: 0.75, // enter at middle of viewport
-    once: false, // trigger just once
+    progress: (el, progress) => {},
+    offset: 0.75,
+    once: false,
   });
+}
+
+function getPreviousSentiment(lastSentiment) {
+  const leavingSentiment = lastSentiment.classList[1].split('__')[1];
+  if (leavingSentiment === 'positive-low') {
+    d3.selectAll('.button').style('font-size', '18px');
+    d3.select('.button-positive-high').style('font-size', '32px');
+  } else if (leavingSentiment === 'neutral') {
+    d3.selectAll('.button').style('font-size', '18px');
+    d3.select('.button-positive-low').style('font-size', '32px');
+  } else if (leavingSentiment === 'negative-low') {
+    d3.selectAll('.button').style('font-size', '18px');
+    d3.select('.button-neutral').style('font-size', '32px');
+  } else if (leavingSentiment === 'negative-high') {
+    d3.selectAll('.button').style('font-size', '18px');
+    d3.select('.button-negative-low').style('font-size', '32px');
+  }
 }
 
 function updateProgressBar(el, elapsed) {
@@ -412,31 +429,7 @@ function addArticles(data) {
 
   $separators = d3.selectAll('.separator');
 
-  // Adjusting content to fit below fixed search bar
-
-  //   d3.select('.content').style('padding-top', `${fixedSearchHeight}px`);
-
-  //   d3.select('.enter-arrow__container').on('click', () => {
-  //     d3.select('.intro').classed('hidden', true);
-  //     d3.select('.method').classed('hidden', true);
-  //     d3.select('.main-page').classed('hidden', false);
-  //     d3.selectAll('#content').style('height', '100%');
-  //   });
-
-  //   d3.selectAll('div.info').on('click', () => {
-  //     console.log('fire');
-  //     d3.select('.method').classed('hidden', false);
-  //     d3.select('.intro').classed('hidden', false);
-  //     d3.select('.intro-text').classed('hidden', true);
-  //     d3.select('.main-page').classed('hidden', true);
-  //   });
-
-  //   d3.select('.method__close').on('click', () => {
-  //     d3.select('.main-page').classed('hidden', false);
-  //     d3.select('.intro').classed('hidden', true);
-  //     d3.select('.intro-text').classed('hidden', true);
-  //     d3.select('.method').classed('hidden', true);
-  //   });
+  // Adjusting content to fit below fixed
 }
 
 function cleanData(data) {
