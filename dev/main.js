@@ -855,9 +855,9 @@ function updateTooltip(d, el, $tooltip) {
   });
   var x = el.offsetLeft;
   var y = el.offsetTop;
-  var toolTipHeight = $tooltip.node().offsetHeight; // console.log(d3.mouse(this))
-
-  $tooltip.style('left', "".concat(x, "px")).style('top', "-10px");
+  var toolTipHeight = $tooltip.node().offsetHeight;
+  console.log(d3.mouse(this));
+  $tooltip.style('left', "".concat(x, "px")).style('top', "".concat(y - toolTipHeight - 10, "px"));
 }
 
 function updateArticle(d, el, $tooltip) {
@@ -1004,7 +1004,7 @@ function handleInputChange() {
 function scrollTo(element) {
   (0, _jump.default)(element, {
     duration: 1000,
-    offset: -(fixedSearchHeight + separatorHeight)
+    offset: -fixedSearchHeight
   });
 }
 

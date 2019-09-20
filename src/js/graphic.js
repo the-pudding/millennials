@@ -177,9 +177,9 @@ function updateTooltip(d, el, $tooltip) {
   const y = el.offsetTop;
   const toolTipHeight = $tooltip.node().offsetHeight;
 
-  // console.log(d3.mouse(this))
+  console.log(d3.mouse(this));
 
-  $tooltip.style('left', `${x}px`).style('top', `-10px`);
+  $tooltip.style('left', `${x}px`).style('top', `${y - toolTipHeight - 10}px`);
 }
 
 function updateArticle(d, el, $tooltip) {
@@ -349,7 +349,7 @@ function handleInputChange() {
 function scrollTo(element) {
   jump(element, {
     duration: 1000,
-    offset: -(fixedSearchHeight + separatorHeight),
+    offset: -fixedSearchHeight,
   });
 }
 
