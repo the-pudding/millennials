@@ -791,6 +791,25 @@ function enterViewSetup() {
     once: false // trigger just once
 
   });
+  enterView({
+    selector: '.separator',
+    enter: function enter(el) {
+      var currentSentiment = el.classList[1].split('__')[1];
+      d3.selectAll('.button').style('font-size', '18px');
+      d3.select(".button-".concat(currentSentiment)).style('font-size', '32px');
+    },
+    exit: function exit(el) {
+      //   el.classList.remove('entered');
+      d3.select('.main-page__sidebar').classed('hidden', true);
+      d3.select('.fixed-search-bar').classed('hidden', true);
+    },
+    progress: function progress(el, _progress3) {// el.style.opacity = progress;
+    },
+    offset: 0.999,
+    // enter at middle of viewport
+    once: false // trigger just once
+
+  });
 }
 
 function updateProgressBar(el, elapsed) {
