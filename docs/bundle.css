@@ -820,6 +820,9 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
   width: 30%;
   margin: 0 auto;
 }
+#content {
+  height: 100%;
+}
 .main-page {
   background: #282828;
   height: 100%;
@@ -844,7 +847,9 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
   margin-left: 3rem;
 }
 .content {
-  padding-left: 1rem;
+  margin-left: 1rem;
+  padding-left: 3rem;
+  padding-right: 5rem;
 }
 .mark {
   max-width: 2reml;
@@ -852,7 +857,7 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
 .button {
   text-align: center;
   max-width: 30%;
-  font-size: 32px;
+  font-size: 18px;
   padding-bottom: 1rem;
   cursor: pointer;
 }
@@ -866,6 +871,9 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
 .verb-name {
   color: #ff5a81;
   text-transform: uppercase;
+}
+.verb-selected {
+  border-bottom: 1px #fff solid;
 }
 .additional-verbs {
   font-weight: 600;
@@ -939,11 +947,18 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
   z-index: 100;
   position: fixed;
   background: #282828;
+  width: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  padding-left: 3rem;
 }
 .nav-container {
   display: flex;
   flex-direction: column;
   padding: 1rem;
+  width: 100%;
+  background-color: #282828;
 }
 .nav-label {
   font-size: 24px;

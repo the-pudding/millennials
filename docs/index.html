@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang='en' data-version='1568741867573'>
+<html lang='en' data-version='1568993254264'>
 
 <head>
 
@@ -219,10 +219,7 @@
 	<main id='content'>
 
 		<section class='intro'>
-		    <div class='intro__sidebar'>
-		        <div class='mark'><a href='https://www.pudding.cool'><img src='/assets/images/P_logo.svg'></a></div>
-		        <div class='info'><img src='/assets/images/Info.svg'></div>
-		    </div>
+		
 		    <div class='intro-text'>
 		        <p class='intro-hed'>Millennials kill everything</p>
 		        <p class='intro-body'>Ok, not really... but as millennials, we’ve seen countless headlines about what we’ve
@@ -264,8 +261,22 @@
 		</section>
 		
 		</section>
-		<section class='main-page hidden'>
-		    <div class='main-page__sidebar'>
+		<section class='main-page'>
+		    <div class='fixed-search-bar hidden'>
+		        <div class='nav-container'>
+		            <div class='nav-label'>Millennials </div>
+		            <nav class='nav-bar'>
+		
+		                <div class='search-verb'>
+		                    <select class='search-verb__input' id='search-verb__input'></select>
+		                </div>
+		                <form class='search-noun'>
+		                    <input class='search-noun__input' type="text" name="search" placeholder="search by noun">
+		                </form>
+		            </nav>
+		        </div>
+		    </div>
+		    <div class='main-page__sidebar hidden'>
 		        <div class='mark'><a href='https://www.pudding.cool'><img src='assets/images/P_logo.svg'></a></div>
 		        <div class='button-container'>
 		            <div class='button button-positive-high'>😁</div>
@@ -276,21 +287,8 @@
 		        </div>
 		        <div class='info'><img src='assets/images/info.svg'></div>
 		    </div>
-		    <div class='main-page__content mono'>
-		        <div class='fixed-search-bar'>
-		            <div class='nav-container'>
-		                <div class='nav-label'>Millennials </div>
-		                <nav class='nav-bar'>
 		
-		                    <div class='search-verb'>
-		                        <select class='search-verb__input' id='search-verb__input'></select>
-		                    </div>
-		                    <form class='search-noun'>
-		                        <input class='search-noun__input' type="text" name="search" placeholder="search by noun">
-		                    </form>
-		                </nav>
-		            </div>
-		        </div>
+		    <div class='main-page__content mono'>
 		        <div class='content'>
 		            <div class='tooltip hidden'></div>
 		        </div>
@@ -305,7 +303,7 @@
 
     
 	<script src='assets/scripts/d3.v5.10.0.min.js'></script>
-	<script src='main.js?version=1568741867573' async></script>
+	<script src='main.js?version=1568993254264' async></script>
     <script src="assets/scripts/choices.min.js"></script>
 </body>
 
