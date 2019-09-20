@@ -848,6 +848,8 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
 }
 .content {
   margin-left: 1rem;
+  padding-left: 3rem;
+  padding-right: 5rem;
 }
 .mark {
   max-width: 2reml;
@@ -869,6 +871,9 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
 .verb-name {
   color: #ff5a81;
   text-transform: uppercase;
+}
+.verb-selected {
+  border-bottom: 1px #fff solid;
 }
 .additional-verbs {
   font-weight: 600;

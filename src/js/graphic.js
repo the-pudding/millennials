@@ -29,6 +29,7 @@ let $nounSearch;
 let $verbSelect;
 
 let formattedVerbs;
+let height;
 let fixedSearchHeight;
 let separatorHeight;
 
@@ -45,15 +46,36 @@ function enterViewSetup() {
         .select('div.verb-name')
         .attr('id');
 
+      d3.selectAll('.verb-name').classed('verb-selected', false);
+
+      d3.select(el)
+        .select('.verb-name')
+        .classed('verb-selected', true);
+
       d3.select('.choices__item--selectable').text(thisVerb);
+      console.log('enter 1');
+      fixedSearchHeight = d3.select('.fixed-search-bar').node().offsetHeight;
     },
     exit: el => {
-      el.classList.remove('entered');
+      const thisVerb = d3
+        .select(el)
+        .select('div.verb-name')
+        .attr('id');
+
+      d3.selectAll('.verb-name').classed('verb-selected', false);
+
+      d3.select(el)
+        .select('.verb-name')
+        .classed('verb-selected', true);
+
+      d3.select('.choices__item--selectable').text(thisVerb);
+      console.log('enter 1');
+      fixedSearchHeight = d3.select('.fixed-search-bar').node().offsetHeight;
     },
     progress: (el, progress) => {
-      el.style.opacity = progress;
+      // el.style.opacity = progress;
     },
-    offset: 0.1, // enter at middle of viewport
+    offset: 0.75, // enter at middle of viewport
     once: false, // trigger just once
   });
 
@@ -62,11 +84,13 @@ function enterViewSetup() {
     enter: el => {
       d3.select('.main-page__sidebar').classed('hidden', false);
       d3.select('.fixed-search-bar').classed('hidden', false);
+      console.log('enter 2');
     },
     exit: el => {
       //   el.classList.remove('entered');
       d3.select('.main-page__sidebar').classed('hidden', true);
       d3.select('.fixed-search-bar').classed('hidden', true);
+      console.log('exit 2');
     },
     progress: (el, progress) => {
       // el.style.opacity = progress;
@@ -83,14 +107,14 @@ function enterViewSetup() {
       d3.select(`.button-${currentSentiment}`).style('font-size', '32px');
     },
     exit: el => {
-      //   el.classList.remove('entered');
-      d3.select('.main-page__sidebar').classed('hidden', true);
-      d3.select('.fixed-search-bar').classed('hidden', true);
+      const currentSentiment = el.classList[1].split('__')[1];
+      d3.selectAll('.button').style('font-size', '18px');
+      d3.select(`.button-${currentSentiment}`).style('font-size', '32px');
     },
     progress: (el, progress) => {
       // el.style.opacity = progress;
     },
-    offset: 0.999, // enter at middle of viewport
+    offset: 0.75, // enter at middle of viewport
     once: false, // trigger just once
   });
 }
@@ -187,7 +211,7 @@ function handleMouseLeave() {
 }
 
 function resize() {
-  const height = window.innerHeight;
+  height = window.innerHeight;
 
   d3.selectAll('section.intro').style('height', `${height}px`);
 }

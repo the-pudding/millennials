@@ -750,6 +750,7 @@ var currentArticle = 0;
 var $nounSearch;
 var $verbSelect;
 var formattedVerbs;
+var height;
 var fixedSearchHeight;
 var separatorHeight;
 var articleInterval;
@@ -760,15 +761,23 @@ function enterViewSetup() {
     enter: function enter(el) {
       // el.classList.add('entered');
       var thisVerb = d3.select(el).select('div.verb-name').attr('id');
+      d3.selectAll('.verb-name').classed('verb-selected', false);
+      d3.select(el).select('.verb-name').classed('verb-selected', true);
       d3.select('.choices__item--selectable').text(thisVerb);
+      console.log('enter 1');
+      fixedSearchHeight = d3.select('.fixed-search-bar').node().offsetHeight;
     },
     exit: function exit(el) {
-      el.classList.remove('entered');
+      var thisVerb = d3.select(el).select('div.verb-name').attr('id');
+      d3.selectAll('.verb-name').classed('verb-selected', false);
+      d3.select(el).select('.verb-name').classed('verb-selected', true);
+      d3.select('.choices__item--selectable').text(thisVerb);
+      console.log('enter 1');
+      fixedSearchHeight = d3.select('.fixed-search-bar').node().offsetHeight;
     },
-    progress: function progress(el, _progress) {
-      el.style.opacity = _progress;
+    progress: function progress(el, _progress) {// el.style.opacity = progress;
     },
-    offset: 0.1,
+    offset: 0.75,
     // enter at middle of viewport
     once: false // trigger just once
 
@@ -778,11 +787,13 @@ function enterViewSetup() {
     enter: function enter(el) {
       d3.select('.main-page__sidebar').classed('hidden', false);
       d3.select('.fixed-search-bar').classed('hidden', false);
+      console.log('enter 2');
     },
     exit: function exit(el) {
       //   el.classList.remove('entered');
       d3.select('.main-page__sidebar').classed('hidden', true);
       d3.select('.fixed-search-bar').classed('hidden', true);
+      console.log('exit 2');
     },
     progress: function progress(el, _progress2) {// el.style.opacity = progress;
     },
@@ -799,13 +810,13 @@ function enterViewSetup() {
       d3.select(".button-".concat(currentSentiment)).style('font-size', '32px');
     },
     exit: function exit(el) {
-      //   el.classList.remove('entered');
-      d3.select('.main-page__sidebar').classed('hidden', true);
-      d3.select('.fixed-search-bar').classed('hidden', true);
+      var currentSentiment = el.classList[1].split('__')[1];
+      d3.selectAll('.button').style('font-size', '18px');
+      d3.select(".button-".concat(currentSentiment)).style('font-size', '32px');
     },
     progress: function progress(el, _progress3) {// el.style.opacity = progress;
     },
-    offset: 0.999,
+    offset: 0.75,
     // enter at middle of viewport
     once: false // trigger just once
 
@@ -872,7 +883,7 @@ function handleMouseLeave() {
 }
 
 function resize() {
-  var height = window.innerHeight;
+  height = window.innerHeight;
   d3.selectAll('section.intro').style('height', "".concat(height, "px"));
 }
 
