@@ -749,6 +749,11 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
   font-family: 'Share Tech Mono', monospace;
   padding-left: 0;
 }
+@media only screen and (max-width: 600px) {
+  .intro-hed {
+    font-size: 72px;
+  }
+}
 .intro-body {
   font-size: 36px;
   color: #fff;

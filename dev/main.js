@@ -855,8 +855,8 @@ function updateTooltip(d, el, $tooltip) {
   });
   var x = el.offsetLeft;
   var y = el.offsetTop;
-  var toolTipHeight = $tooltip.node().offsetHeight;
-  console.log(d3.mouse(this));
+  var toolTipHeight = $tooltip.node().offsetHeight; //   console.log(d3.mouse(this));
+
   $tooltip.style('left', "".concat(x, "px")).style('top', "".concat(y - toolTipHeight - 10, "px"));
 }
 
