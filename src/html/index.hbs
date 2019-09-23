@@ -3,38 +3,40 @@
 
 <head>
 
-	{{!-- {{> base/meta}} --}}
+    {{!-- {{> base/meta}} --}}
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
-	<link inline rel='stylesheet' href='bundle.css' />
+    <link inline rel='stylesheet' href='bundle.css' />
     <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-	{{> base/font}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.css">
+    {{> base/font}}
 
 
-	<script inline src='head.js'></script>
+    <script inline src='head.js'></script>
 
-	{{> base/analytics }}
+    {{> base/analytics }}
 
 </head>
 
 <body>
 
-	{{!-- {{> base/header 'sticky'}} --}}
+    {{!-- {{> base/header 'sticky'}} --}}
 
-	<main id='content'>
+    <main id='content'>
 
-		{{> story/main }}
-		{{!-- delete guide and put your html here --}}
-		{{!-- {{> base/guide }} --}}
+        {{> story/main }}
+        {{!-- delete guide and put your html here --}}
+        {{!-- {{> base/guide }} --}}
 
-	</main>
+    </main>
 
-	{{!-- {{> base/footer }} --}}
+    {{!-- {{> base/footer }} --}}
 
-    
-	<script src='{{basepath}}assets/scripts/d3.v5.10.0.min.js'></script>
-	<script src='main.js?version={{timestamp}}' async></script>
+
+    <script src='{{basepath}}assets/scripts/d3.v5.10.0.min.js'></script>
+    <script src='main.js?version={{timestamp}}' async></script>
     <script src="{{basepath}}assets/scripts/choices.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js"></script>
 </body>
 
 </html>

@@ -1,10 +1,9 @@
 /* global d3 */
 import jump from 'jump.js';
+import Shepherd from 'shepherd.js';
 import generateEmoji from './generateEmoji';
 
 const enterView = require('enter-view');
-
-console.log(enterView);
 
 let $content;
 
@@ -35,6 +34,8 @@ let separatorHeight;
 
 let articleInterval;
 
+let tour;
+
 function enterViewSetup() {
   enterView({
     selector: '.verb-container',
@@ -53,7 +54,7 @@ function enterViewSetup() {
         .classed('verb-selected', true);
 
       d3.select('.choices__item--selectable').text(thisVerb);
-      console.log('enter 1');
+
       fixedSearchHeight = d3.select('.fixed-search-bar').node().offsetHeight;
     },
     exit: el => {
@@ -69,7 +70,7 @@ function enterViewSetup() {
         .classed('verb-selected', true);
 
       d3.select('.choices__item--selectable').text(thisVerb);
-      console.log('enter 1');
+
       fixedSearchHeight = d3.select('.fixed-search-bar').node().offsetHeight;
     },
     progress: (el, progress) => {
@@ -84,13 +85,13 @@ function enterViewSetup() {
     enter: el => {
       d3.select('.main-page__sidebar').classed('hidden', false);
       d3.select('.fixed-search-bar').classed('hidden', false);
-      console.log('enter 2');
+
+      tour.start();
     },
     exit: el => {
       //   el.classList.remove('entered');
       d3.select('.main-page__sidebar').classed('hidden', true);
       d3.select('.fixed-search-bar').classed('hidden', true);
-      console.log('exit 2');
     },
     progress: (el, progress) => {
       // el.style.opacity = progress;
@@ -176,8 +177,6 @@ function updateTooltip(d, el, $tooltip) {
   const x = el.offsetLeft;
   const y = el.offsetTop;
   const toolTipHeight = $tooltip.node().offsetHeight;
-
-  //   console.log(d3.mouse(this));
 
   $tooltip.style('left', `${x}px`).style('top', `${y - toolTipHeight - 10}px`);
 }
@@ -428,6 +427,73 @@ function addArticles(data) {
   d3.select(verbDropDown).on('change', handleDropDown);
 
   $separators = d3.selectAll('.separator');
+
+  tour = new Shepherd.Tour({
+    defaultStepOptions: {
+      classes: 'shadow-md bg-purple-dark',
+      scrollTo: true,
+    },
+  });
+
+  tour.addStep({
+    id: 'tour-step-1',
+    text: 'Search for things millennials do here',
+    attachTo: {
+      element: '.search-verb',
+      on: 'bottom',
+    },
+    classes: 'example-step-extra-class',
+    buttons: [
+      {
+        text: 'Close',
+        action: tour.destroy,
+      },
+      {
+        text: 'Next',
+        action: tour.next,
+      },
+    ],
+  });
+
+  tour.addStep({
+    id: 'tour-step-2',
+    text: "You can search for the objects of millenials's actions here",
+    attachTo: {
+      element: '.search-noun__input',
+      on: 'bottom',
+    },
+    classes: 'example-step-extra-class',
+    buttons: [
+      {
+        text: 'Close',
+        action: tour.destroy,
+      },
+      {
+        text: 'Next',
+        action: tour.next,
+      },
+    ],
+  });
+
+  tour.addStep({
+    id: 'tour-step-2',
+    text: 'Scroll to things millenials feel positively and negatively about',
+    attachTo: {
+      element: '.button-container',
+      on: 'right',
+    },
+    classes: 'example-step-extra-class',
+    buttons: [
+      {
+        text: 'Close',
+        action: tour.destroy,
+      },
+      {
+        text: 'End',
+        action: tour.complete,
+      },
+    ],
+  });
 
   // Adjusting content to fit below fixed
 }

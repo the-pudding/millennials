@@ -11,9 +11,11 @@
 		"choices.js": "^7.0.0",
 		"enter-view": "^2.0.0",
 		"i": "^0.3.6",
+		"intro.js": "^2.9.3",
 		"jump.js": "^1.0.2",
 		"lodash.debounce": "4.0.8",
 		"nouislider": "14.0.2",
+		"shepherd.js": "^5.0.1",
 		"superagent": "5.1.0"
 	},
 	"devDependencies": {
