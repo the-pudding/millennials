@@ -749,6 +749,11 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
   font-family: 'Share Tech Mono', monospace;
   padding-left: 0;
 }
+@media only screen and (min-width: 30em) {
+  .intro-hed {
+    font-size: 12px;
+  }
+}
 .intro-body {
   font-size: 36px;
   color: #fff;
@@ -978,5 +983,14 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
 }
 .faded {
   color: #808080;
+}
+.shepherd .shepherd-button {
+  font-family: 'Share Tech Mono', monospace;
+  color: #fff;
+  background-color: #af2896;
+}
+.shepherd .shepherd-text {
+  font-family: 'Share Tech Mono', monospace;
+  color: #000;
 }
 /*# sourceMappingURL=bundle.css.map */

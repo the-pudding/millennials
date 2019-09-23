@@ -10317,6 +10317,7 @@ function enterViewSetup() {
       //   el.classList.remove('entered');
       d3.select('.main-page__sidebar').classed('hidden', true);
       d3.select('.fixed-search-bar').classed('hidden', true);
+      tour.complete();
     },
     progress: function progress(el, _progress2) {// el.style.opacity = progress;
     },
@@ -10456,18 +10457,23 @@ function setSentimentScroll() {
   // const scrollTarget = d3.select(`.verb-container-${verbValue}`).node()
 
   d3.select('.button-positive-high').on('click', function () {
+    tour.complete();
     scrollTo(d3.select('.separator__positive-high').node());
   });
   d3.select('.button-positive-low').on('click', function () {
+    tour.complete();
     scrollTo(d3.select('.separator__positive-low').node());
   });
   d3.select('.button-negative-low').on('click', function () {
+    tour.complete();
     scrollTo(d3.select('.separator__negative-low').node());
   });
   d3.select('.button-negative-high').on('click', function () {
+    tour.complete();
     scrollTo(d3.select('.separator__negative-high').node());
   });
   d3.select('.button-neutral').on('click', function () {
+    tour.complete();
     scrollTo(d3.select('.separator__neutral').node());
   });
 }
@@ -10583,7 +10589,7 @@ function addArticles(data) {
   $separators = d3.selectAll('.separator');
   tour = new _shepherd.default.Tour({
     defaultStepOptions: {
-      classes: 'shadow-md bg-purple-dark',
+      classes: 'custom-tour',
       scrollTo: true
     }
   });
@@ -10597,7 +10603,7 @@ function addArticles(data) {
     classes: 'example-step-extra-class',
     buttons: [{
       text: 'Close',
-      action: tour.destroy
+      action: tour.complete
     }, {
       text: 'Next',
       action: tour.next
@@ -10613,7 +10619,7 @@ function addArticles(data) {
     classes: 'example-step-extra-class',
     buttons: [{
       text: 'Close',
-      action: tour.destroy
+      action: tour.complete
     }, {
       text: 'Next',
       action: tour.next
@@ -10634,7 +10640,8 @@ function addArticles(data) {
       text: 'End',
       action: tour.complete
     }]
-  }); // Adjusting content to fit below fixed
+  });
+  d3.select('#content').on('click', tour.complete);
 }
 
 function cleanData(data) {
