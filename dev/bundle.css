@@ -749,7 +749,7 @@ header.is-sticky.is-dark .header__toggle.is-visible span svg {
   font-family: 'Share Tech Mono', monospace;
   padding-left: 0;
 }
-@media only screen and (min-width: 30em) {
+@media only screen and (min-width: 40em) {
   .intro-hed {
     font-size: 12px;
   }
